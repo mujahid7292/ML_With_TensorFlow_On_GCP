@@ -40,15 +40,124 @@ DEFAULTS = [[0.0], ['Sun'], [0], [-74.0], [40.0], [-74.0], [40.7], [1.0], ['noke
 INPUT_COLUMNS = [
     # Define Features
     tf.feature_column.categorical_column_with_vocabulary_list('dayofweek', vocabulary_list=['Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat']),
-    
+    tf.feature_column.categorical_column_with_identity('hourofday', num_buckets=24),
 
     # Define Numeric Column
     tf.feature_column.numeric_column('pickuplon'),
     tf.feature_column.numeric_column('pickuplat'),
     tf.feature_column.numeric_column('dropofflat'),
     tf.feature_column.numeric_column('dropofflon'),
-    tf.feature_column.numeric_column('passengers')
+    tf.feature_column.numeric_column('passengers'),
+
+    # Engineered feature that are creatd in input_fn
+    tf.feature_column.numeric_column('latdiff'),
+    tf.feature_column.numeric_column('londiff'),
+    tf.feature_column.numeric_column('euclidean')
 ]
+
+# Build the estimator
+def build_estimator(model_dir, nbuckets, hidden_units):
+    """
+    Build an estimator starting from INPUT_COLUMNS.
+    These include feature transformations and synthetic
+    features. The model is a wide-and-deep model.
+    """
+
+    # Input Columns
+    (dayofweek, hourofday, plat, plon ,dlat, dlon, pcount, latdiff, londiff, euclidean) = INPUT_COLUMNS
+    
+    # Bucketize the lat and lon
+    latbuckets = np.linspace(38.0 ,42.0 , nbuckets).tolist()
+    lonbuckets = np.linspace(-76.0, -72.0, nbuckets).tolist()
+    b_plat = tf.feature_column.bucketized_column(plat, latbuckets)
+    b_dlat = tf.feature_column.bucketized_column(dlat, latbuckets)
+    b_plon = tf.feature_column.bucketized_column(plon, lonbuckets)
+    b_dlon = tf.feature_column.bucketized_column(dlon, lonbuckets)
+
+    # Feature Cross
+    ploc = tf.feature_column.crossed_column([b_plat, b_plon], nbuckets * nbuckets)
+    dloc = tf.feature_column.crossed_column([b_dlat, b_dlon], nbuckets * nbuckets)
+    pd_pair = tf.feature_column.crossed_column([ploc, dloc], nbuckets ** 4)
+    day_hr = tf.feature_column.crossed_column([dayofweek, hourofday], 24 * 7)
+
+    # Wide and deep columns
+    wide_columns = [
+
+        # Feature crosses
+        ploc, dloc, pd_pair,
+        day_hr,
+
+        # Sparse columns
+        dayofweek, hourofday,
+
+        # Anything with a linear relationship
+        pcount
+    ]
+
+    deep_columns = [
+
+        # Embedding column to group together
+        tf.feature_column.embedding_column(pd_pair, 10),
+        tf.feature_column.embedding_column(day_hr, 10),
+
+        # Numeric columns
+        plat, plon, dlat, dlon,
+        latdiff, londiff, euclidean
+    ]
+
+    # Setting the check point enterval to be much lower for this task
+    run_config = tf.compat.v1.estimator.RunConfig(
+        save_checkpoints_secs=30,
+        keep_checkpoint_max=3
+    )
+
+    estimator = tf.compat.v1.estimator.DNNLinearCombinedRegressor(
+        model_dir=model_dir,
+        linear_feature_columns=wide_columns,
+        dnn_feature_columns=deep_columns,
+        dnn_hidden_units=hidden_units,
+        config=run_config
+    )
+
+    # Add extra evaluation metric for hyper parameter tunning
+    estimator = tf.contrib.estimator.add_metrics(estimator, add_eval_metrics)
+
+    return estimator
+
+# Create a feature engineering function that will be used in the input and the serving input
+# functions
+def add_engineered(features):
+    """
+    With this function we will do feature
+    engineering in tensorflow.
+    """
+    lat1 = features['pickuplat']
+    lat2 = features['dropofflat']
+    lon1 = features['pickuplon']
+    lon2 = features['dropofflon']
+    latdiff = lat1 - lat2
+    londiff = lon1 - lon2
+
+    # Set features for distance with sign that indicates direction
+    features['latdiff'] = latdiff
+    features['londiff'] = londiff
+    dist = tf.sqrt(latdiff * latdiff + londiff * londiff)
+    features['euclidean'] = dist
+
+    return features
+
+# Create your serving input function so that your trained model will be able to serve predictions
+def serving_input_fn():
+    feature_placeholders = {
+        # All the real-valued column (pickuplon,pickuplat,dropofflon,dropofflat,passengers)
+        column.name: tf.compat.v1.placeholder(tf.float32, [None]) for column in INPUT_COLUMNS[2:7]
+    }
+    feature_placeholders['dayofweek'] = tf.compat.v1.placeholder(tf.string, [None])
+    feature_placeholders['hourofday'] = tf.compat.v1.placeholder(tf.int32, [None])
+
+    features = add_engineered(feature_placeholders.copy())
+
+    return tf.estimator.export.ServingInputReceiver(features, feature_placeholders)
 
 # Create an input function that stores your data into a dataset
 def read_dataset(filename, mode, batch_size = 512):
@@ -57,16 +166,7 @@ def read_dataset(filename, mode, batch_size = 512):
             columns = tf.compat.v1.decode_csv(value_column, record_defaults = DEFAULTS)
             features = dict(zip(CSV_COLUMNS, columns))
             label = features.pop(LABEL_COLUMN)
-            return features, label
-            # keys_to_features = {
-            #     'label': tf.compat.v1.FixedLenFeature((), dtype=tf.int64),
-            #     'features': tf.compat.v1.FixedLenFeature(shape=(7,), dtype=tf.float32),
-            # }
-            # parsed = tf.compat.v1.parse_single_example(value_column, keys_to_features)
-            # my_features = {}
-            # for idx, names in enumerate(CSV_COLUMNS):
-            #     my_features[names] = parsed['features'][idx]
-            #return my_features, parsed['label']
+            return add_engineered(features), label
     
         # Create list of files that match pattern
         file_list = tf.compat.v1.gfile.Glob(filename)
@@ -81,26 +181,10 @@ def read_dataset(filename, mode, batch_size = 512):
             num_epochs = 1 # end-of-input after this
 
         dataset = dataset.repeat(num_epochs).batch(batch_size)
-        return tf.compat.v1.data.make_one_shot_iterator(dataset=dataset)
+        #batch_features, batch_labels = dataset.make_one_shot_iterator().get_next()
+        batch_features, batch_labels = tf.compat.v1.data.make_one_shot_iterator(dataset=dataset)
+        return batch_features, batch_labels
     return _input_fn
-
-
-
-# Create a function that will augment your feature set
-def add_more_features(feats):
-    # Nothing to add (yet!)
-    return feats
-
-feature_cols = add_more_features(INPUT_COLUMNS)
-
-# Create your serving input function so that your trained model will be able to serve predictions
-def serving_input_fn():
-    feature_placeholders = {
-        column.name: tf.compat.v1.placeholder(tf.float32, [None]) for column in INPUT_COLUMNS
-    }
-
-    features = feature_placeholders
-    return tf.estimator.export.ServingInputReceiver(features, feature_placeholders)
 
 # Create an estimator that we are going to train and evaluate
 def train_and_evaluate(args):
@@ -124,3 +208,14 @@ def train_and_evaluate(args):
         throttle_secs = args['throttle_secs'],
         exporters = exporter)
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
+
+# Create a function that will augment your feature set
+def add_more_features(feats):
+    # Nothing to add (yet!)
+    return feats
+
+feature_cols = add_more_features(INPUT_COLUMNS)
+
+
+
+
