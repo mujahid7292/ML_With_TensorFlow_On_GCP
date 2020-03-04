@@ -15,13 +15,11 @@
 """Example implementation of code to run on the Cloud ML service.
 """
 
+import traceback
 import argparse
 import json
 import os
-
-# for python2
-# import model
-# for python3
+import tensorflow as tf
 from . import model
 
 if __name__ == '__main__':
@@ -41,7 +39,19 @@ if __name__ == '__main__':
     parser.add_argument(
         '--train_steps',
         help = 'Steps to run the training job for',
-        type = int
+        type = int,
+        default=5000
+    )
+    parser.add_argument(
+        '--eval_data_paths',
+        help = 'GCS or local path to evaluation data',
+        required = True
+    )
+    parser.add_argument(
+        '--eval_batch_size',
+        help = 'Batch size for evaluation steps',
+        type = int,
+        default = 512
     )
     parser.add_argument(
         '--eval_steps',
@@ -49,17 +59,18 @@ if __name__ == '__main__':
         default = 10,
         type = int
     )
-    parser.add_argument(
-        '--eval_data_paths',
-        help = 'GCS or local path to evaluation data',
-        required = True
-    )
+    
     # Training arguments
     parser.add_argument(
+        '--nbuckets',
+        help= "Number of buckets into which discretize lats and lons",
+        default=10,
+        type=int
+    )
+    parser.add_argument(
         '--hidden_units',
-        help = 'List of hidden layer sizes to use for DNN feature columns',
-        nargs = '+',
-        type = int,
+        help = 'Hidden layer sizes to use for DNN feature columns -- provide space-separated layers',
+        type = str,
         default = [128, 32, 4]
     )
     parser.add_argument(
@@ -81,10 +92,15 @@ if __name__ == '__main__':
         type = int
     )
     parser.add_argument(
-        '--throttle_secs',
-        help = 'Seconds between evaluations',
-        default = 300,
+        '--min_eval_frequency',
+        help = 'Minimum number of training steps between evaluations',
+        default = 1,
         type = int
+    )
+    parser.add_argument(
+        '--format',
+        help= "Is the input data format is csv or tf_record",
+        default='csv'
     )
 
     args = parser.parse_args()
@@ -94,15 +110,18 @@ if __name__ == '__main__':
     arguments.pop('job_dir', None)
     arguments.pop('job-dir', None)
 
-    output_dir = arguments['output_dir']
     # Append trial_id to path if we are doing hptuning
     # This code can be removed if you are not using hyperparameter tuning
-    output_dir = os.path.join(
-        output_dir,
+    arguments['output_dir'] = os.path.join(
+        arguments['output_dir'],
         json.loads(
             os.environ.get('TF_CONFIG', '{}')
-        ).get('task', {}).get('trail', '')
+        ).get('task', {}).get('trial', '')
     )
 
     # Run the training job
-    model.train_and_evaluate(arguments)
+    # Run the training job:
+    try:
+        model.train_and_evaluate(arguments)
+    except:
+        traceback.print_exc()

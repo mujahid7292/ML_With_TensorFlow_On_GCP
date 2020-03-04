@@ -120,8 +120,7 @@ def build_estimator(model_dir, nbuckets, hidden_units):
     )
 
     # Add extra evaluation metric for hyper parameter tunning
-    estimator = tf.contrib.estimator.add_metrics(estimator, add_eval_metrics)
-
+    estimator = tf.compat.v1.estimator.add_metrics(estimator, add_eval_metrics)
     return estimator
 
 # Create a feature engineering function that will be used in the input and the serving input
@@ -189,32 +188,35 @@ def read_dataset(filename, mode, batch_size = 512):
 # Create an estimator that we are going to train and evaluate
 def train_and_evaluate(args):
     tf.compat.v1.summary.FileWriterCache.clear() # ensure filewriter cache is clear for TensorBoard events file
-    estimator = tf.estimator.DNNRegressor(
-        model_dir = args['output_dir'],
-        feature_columns = feature_cols,
-        hidden_units = args['hidden_units'])
+    estimator = build_estimator(
+        model_dir=args['output_dir'],
+        nbuckets=args['nbuckets'], 
+        hidden_units=args['hidden_unit'].split(' ')
+        )
     train_spec = tf.estimator.TrainSpec(
         input_fn = read_dataset(args['train_data_paths'],
                                 batch_size = args['train_batch_size'],
                                 mode = tf.estimator.ModeKeys.TRAIN),
-        max_steps = args['train_steps'])
+        max_steps = args['train_steps']
+        )
     exporter = tf.estimator.LatestExporter('exporter', serving_input_fn)
     eval_spec = tf.estimator.EvalSpec(
         input_fn = read_dataset(args['eval_data_paths'],
                                 batch_size = 10000,
-                                mode = tf.estimator.ModeKeys.EVAL),
-        steps = None,
-        start_delay_secs = args['eval_delay_secs'],
-        throttle_secs = args['throttle_secs'],
-        exporters = exporter)
+                                mode = tf.estimator.ModeKeys.EVAL
+                                ),
+        steps = 100,
+        exporters = exporter
+        )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
 
-# Create a function that will augment your feature set
-def add_more_features(feats):
-    # Nothing to add (yet!)
-    return feats
-
-feature_cols = add_more_features(INPUT_COLUMNS)
+def add_eval_metrics(labels, predictions):
+    """
+    """ 
+    pred_values = predictions['predictions']
+    return {
+        'rmse': tf.metrics.RootMeanSquaredError(labels, pred_values)
+    }
 
 
 
