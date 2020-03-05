@@ -24,6 +24,7 @@ import shutil
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
+
 # List the CSV columns
 CSV_COLUMNS = 'fare_amount,dayofweek,hourofday,pickuplon,pickuplat,dropofflon,dropofflat,passengers,key'.split(',')
 
@@ -120,7 +121,7 @@ def build_estimator(model_dir, nbuckets, hidden_units):
     )
 
     # Add extra evaluation metric for hyper parameter tunning
-    estimator = tf.compat.v1.estimator.add_metrics(estimator, add_eval_metrics)
+    #estimator = tf.compat.v1.estimator.add_metrics(estimator, add_eval_metrics())
     return estimator
 
 # Create a feature engineering function that will be used in the input and the serving input
@@ -181,7 +182,7 @@ def read_dataset(filename, mode, batch_size = 512):
 
         dataset = dataset.repeat(num_epochs).batch(batch_size)
         #batch_features, batch_labels = dataset.make_one_shot_iterator().get_next()
-        batch_features, batch_labels = tf.compat.v1.data.make_one_shot_iterator(dataset=dataset)
+        batch_features, batch_labels = tf.compat.v1.data.make_one_shot_iterator(dataset=dataset).get_next()
         return batch_features, batch_labels
     return _input_fn
 
@@ -191,7 +192,7 @@ def train_and_evaluate(args):
     estimator = build_estimator(
         model_dir=args['output_dir'],
         nbuckets=args['nbuckets'], 
-        hidden_units=args['hidden_unit'].split(' ')
+        hidden_units=args['hidden_units']
         )
     train_spec = tf.estimator.TrainSpec(
         input_fn = read_dataset(args['train_data_paths'],
@@ -210,6 +211,7 @@ def train_and_evaluate(args):
         )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
 
+@tf.function
 def add_eval_metrics(labels, predictions):
     """
     """ 
