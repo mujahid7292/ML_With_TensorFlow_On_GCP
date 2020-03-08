@@ -22,8 +22,7 @@ import tensorflow as tf
 import numpy as np
 import shutil
 
-#tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
-tf.logging.set_verbosity(tf.logging.INFO)
+tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
 
 # List the CSV columns
@@ -108,23 +107,12 @@ def build_estimator(model_dir, nbuckets, hidden_units):
     ]
 
     # Setting the check point enterval to be much lower for this task
-    #run_config = tf.compat.v1.estimator.RunConfig(
-    #    save_checkpoints_secs=30,
-    #    keep_checkpoint_max=3
-    #)
-    run_config = tf.estimator.RunConfig(
+    run_config = tf.compat.v1.estimator.RunConfig(
         save_checkpoints_secs=30,
         keep_checkpoint_max=3
     )
 
-    #estimator = tf.compat.v1.estimator.DNNLinearCombinedRegressor(
-    #    model_dir=model_dir,
-    #    linear_feature_columns=wide_columns,
-    #    dnn_feature_columns=deep_columns,
-    #    dnn_hidden_units=hidden_units,
-    #    config=run_config
-    #)
-    estimator = tf.estimator.DNNLinearCombinedRegressor(
+    estimator = tf.compat.v1.estimator.DNNLinearCombinedRegressor(
         model_dir=model_dir,
         linear_feature_columns=wide_columns,
         dnn_feature_columns=deep_columns,
@@ -162,13 +150,10 @@ def add_engineered(features):
 def serving_input_fn():
     feature_placeholders = {
         # All the real-valued column (pickuplon,pickuplat,dropofflon,dropofflat,passengers)
-        #column.name: tf.compat.v1.placeholder(tf.float32, [None]) for column in INPUT_COLUMNS[2:7]
-        column.name: tf.placeholder(tf.float32, [None]) for column in INPUT_COLUMNS[2:7]
+        column.name: tf.compat.v1.placeholder(tf.float32, [None]) for column in INPUT_COLUMNS[2:]
     }
-    #feature_placeholders['dayofweek'] = tf.compat.v1.placeholder(tf.string, [None])
-    #feature_placeholders['hourofday'] = tf.compat.v1.placeholder(tf.int32, [None])
-    feature_placeholders['dayofweek'] = tf.placeholder(tf.string, [None])
-    feature_placeholders['hourofday'] = tf.placeholder(tf.int32, [None])
+    feature_placeholders['dayofweek'] = tf.compat.v1.placeholder(tf.string, [None])
+    feature_placeholders['hourofday'] = tf.compat.v1.placeholder(tf.int32, [None])
 
     features = add_engineered(feature_placeholders.copy())
 
@@ -178,15 +163,13 @@ def serving_input_fn():
 def read_dataset(filename, mode, batch_size = 512):
     def _input_fn():
         def decode_csv(value_column):
-            #columns = tf.compat.v1.decode_csv(value_column, record_defaults = DEFAULTS)
-            columns = tf.decode_csv(value_column, record_defaults = DEFAULTS)
+            columns = tf.compat.v1.decode_csv(value_column, record_defaults = DEFAULTS)
             features = dict(zip(CSV_COLUMNS, columns))
             label = features.pop(LABEL_COLUMN)
             return add_engineered(features), label
     
         # Create list of files that match pattern
-        #file_list = tf.compat.v1.gfile.Glob(filename)
-        file_list = tf.gfile.Glob(filename)
+        file_list = tf.compat.v1.gfile.Glob(filename)
 
         # Create dataset from file list
         dataset = tf.data.TextLineDataset(file_list).map(decode_csv)
@@ -198,15 +181,13 @@ def read_dataset(filename, mode, batch_size = 512):
             num_epochs = 1 # end-of-input after this
 
         dataset = dataset.repeat(num_epochs).batch(batch_size)
-        batch_features, batch_labels = dataset.make_one_shot_iterator().get_next()
-        #batch_features, batch_labels = tf.compat.v1.data.make_one_shot_iterator(dataset=dataset).get_next()
+        batch_features, batch_labels = tf.compat.v1.data.make_one_shot_iterator(dataset=dataset).get_next()
         return batch_features, batch_labels
     return _input_fn
 
 # Create an estimator that we are going to train and evaluate
 def train_and_evaluate(args):
-    #tf.compat.v1.summary.FileWriterCache.clear() # ensure filewriter cache is clear for TensorBoard events file
-    tf.summary.FileWriterCache.clear() 
+    tf.compat.v1.summary.FileWriterCache.clear() # ensure filewriter cache is clear for TensorBoard events file
     estimator = build_estimator(
         model_dir=args['output_dir'],
         nbuckets=args['nbuckets'], 
@@ -229,7 +210,7 @@ def train_and_evaluate(args):
         )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
 
-#@tf.function
+@tf.function
 def add_eval_metrics(labels, predictions):
     """
     """ 
