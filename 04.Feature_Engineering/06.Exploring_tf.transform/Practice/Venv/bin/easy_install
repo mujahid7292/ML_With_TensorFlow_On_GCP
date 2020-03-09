@@ -1,0 +1,10 @@
+#!/bin/sh
+'''exec' /media/mujahid7292/Data/GoogleDriveSandCorp2014/ML_With_TensorFlow_On_GCP/04.Feature_Engineering/06.Exploring_tf.transform/Practice/Venv/bin/python "$0" "$@"
+' '''
+# -*- coding: utf-8 -*-
+import re
+import sys
+from setuptools.command.easy_install import main
+if __name__ == '__main__':
+    sys.argv[0] = re.sub(r'(-script\.pyw|\.exe)?$', '', sys.argv[0])
+    sys.exit(main())
