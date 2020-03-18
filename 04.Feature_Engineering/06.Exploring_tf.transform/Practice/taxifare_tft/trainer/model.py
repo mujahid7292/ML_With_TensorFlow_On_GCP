@@ -18,9 +18,11 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import print_function
 
-import tensorflow as tf
 import numpy as np
-import shutil
+import os
+import tensorflow as tf
+from tensorflow_transform.saved import input_fn_maker, saved_transform_io
+from tensorflow_transform.tf_metadata import metadata_io
 
 tf.compat.v1.logging.set_verbosity(tf.compat.v1.logging.INFO)
 
@@ -40,7 +42,7 @@ DEFAULTS = [[0.0], ['Sun'], [0], [-74.0], [40.0], [-74.0], [40.7], [1.0], ['noke
 # These are the raw input columns, and will be provided for prediction also
 INPUT_COLUMNS = [
     # Define Features
-    tf.feature_column.categorical_column_with_vocabulary_list('dayofweek', vocabulary_list=['Sun', 'Mon', 'Tues', 'Wed', 'Thu', 'Fri', 'Sat']),
+    tf.feature_column.categorical_column_with_vocabulary_list('dayofweek', num_buckets=100), # Some larger number
     tf.feature_column.categorical_column_with_identity('hourofday', num_buckets=24),
 
     # Define Numeric Column
@@ -68,8 +70,8 @@ def build_estimator(model_dir, nbuckets, hidden_units):
     (dayofweek, hourofday, plat, plon ,dlat, dlon, pcount, latdiff, londiff, euclidean) = INPUT_COLUMNS
     
     # Bucketize the lat and lon
-    latbuckets = np.linspace(38.0 ,42.0 , nbuckets).tolist()
-    lonbuckets = np.linspace(-76.0, -72.0, nbuckets).tolist()
+    latbuckets = np.linspace(0 ,1.0 , nbuckets).tolist()
+    lonbuckets = np.linspace(0, 1.0, nbuckets).tolist()
     b_plat = tf.feature_column.bucketized_column(plat, latbuckets)
     b_dlat = tf.feature_column.bucketized_column(dlat, latbuckets)
     b_plon = tf.feature_column.bucketized_column(plon, lonbuckets)
@@ -107,12 +109,12 @@ def build_estimator(model_dir, nbuckets, hidden_units):
     ]
 
     # Setting the check point enterval to be much lower for this task
-    run_config = tf.compat.v1.estimator.RunConfig(
+    run_config = tf.estimator.RunConfig(
         save_checkpoints_secs=30,
         keep_checkpoint_max=3
     )
 
-    estimator = tf.compat.v1.estimator.DNNLinearCombinedRegressor(
+    return tf.estimator.DNNLinearCombinedRegressor(
         model_dir=model_dir,
         linear_feature_columns=wide_columns,
         dnn_feature_columns=deep_columns,
@@ -120,105 +122,98 @@ def build_estimator(model_dir, nbuckets, hidden_units):
         config=run_config
     )
 
-    # Add extra evaluation metric for hyper parameter tunning
-    #estimator = tf.compat.v1.estimator.add_metrics(estimator, add_eval_metrics())
-    return estimator
-
-# Create a feature engineering function that will be used in the input and the serving input
-# functions
-def add_engineered(features):
-    """
-    With this function we will do feature
-    engineering in tensorflow.
-    """
-    lat1 = features['pickuplat']
-    lat2 = features['dropofflat']
-    lon1 = features['pickuplon']
-    lon2 = features['dropofflon']
-    latdiff = lat1 - lat2
-    londiff = lon1 - lon2
-
-    # Set features for distance with sign that indicates direction
-    features['latdiff'] = latdiff
-    features['londiff'] = londiff
-    dist = tf.sqrt(latdiff * latdiff + londiff * londiff)
-    features['euclidean'] = dist
-
-    return features
-
 # Create your serving input function so that your trained model will be able to serve predictions
-def serving_input_fn():
-    feature_placeholders = {
-        # All the real-valued column (pickuplon,pickuplat,dropofflon,dropofflat,passengers)
-        column.name: tf.compat.v1.placeholder(tf.float32, [None]) for column in INPUT_COLUMNS[2:]
-    }
-    feature_placeholders['dayofweek'] = tf.compat.v1.placeholder(tf.string, [None])
-    feature_placeholders['hourofday'] = tf.compat.v1.placeholder(tf.int32, [None])
+def make_serving_input_fn_for_base64_json(args):
+    """
+    """
+    raw_metadata = metadata_io.read_metadata(
+        os.path.join(args['metadata_path'], 'rawdata_metadata')
+        )
+    
+    transform_savemodel_dir = (os.path.join(args['metadata_path'], 'transform_fn'))
 
-    features = add_engineered(feature_placeholders.copy())
+    return input_fn_maker.build_parsing_transforming_serving_input_receiver_fn(
+        raw_metadata, 
+        transform_savemodel_dir,
+        exclude_raw_keys=[LABEL_COLUMN])
 
-    return tf.estimator.export.ServingInputReceiver(features, feature_placeholders)
+def make_serving_input_fn(args):
+    """
+    """
+    transform_savemodel_dir = (os.path.join(args['metadata_path'], 'transform_fn'))
+    def _input_fn():
+        """
+        """
+        # Place holder for all the raw input
+        feature_placeholders = {
+            column_name: tf.compat.v1.placeholder(tf.float32, [None]) for column_name in 'pickuplon,pickuplat,dropofflon,dropofflat'.split(',')
+        }
+        feature_placeholders['passengers'] = tf.compat.v1.placeholder(tf.int64, [None])
+        feature_placeholders['dayofweek'] = tf.compat.v1.placeholder(tf.string, [None])
+        feature_placeholders['hourofday'] = tf.compat.v1.placeholder(tf.int64, [None])
+        feature_placeholders['key'] = tf.compat.v1.placeholder(tf.string, [None])
+
+        # Transform using saved model `transform_fn`
+        _, features = saved_transform_io.partially_apply_saved_transform(
+            transform_savemodel_dir,
+            feature_placeholders
+            )
+        return tf.estimator.export.ServingInputReceiver(features, feature_placeholders)
+    return _input_fn
 
 # Create an input function that stores your data into a dataset
-def read_dataset(filename, mode, batch_size = 512):
-    def _input_fn():
-        def decode_csv(value_column):
-            columns = tf.compat.v1.decode_csv(value_column, record_defaults = DEFAULTS)
-            features = dict(zip(CSV_COLUMNS, columns))
-            label = features.pop(LABEL_COLUMN)
-            return add_engineered(features), label
+def read_dataset(args, mode):
+    """
+    """
+    batch_size = args['train_batch_size']
+
+    if mode == tf.estimator.ModeKeys.TRAIN:
+        input_paths = args['train_data_paths']
+    else:
+        input_paths = args['eval_data_paths']
     
-        # Create list of files that match pattern
-        file_list = tf.compat.v1.gfile.Glob(filename)
-
-        # Create dataset from file list
-        dataset = tf.data.TextLineDataset(file_list).map(decode_csv)
-        
-        if mode == tf.estimator.ModeKeys.TRAIN:
-            num_epochs = None # indefinitely
-            dataset = dataset.shuffle(buffer_size = 10 * batch_size)
-        else:
-            num_epochs = 1 # end-of-input after this
-
-        dataset = dataset.repeat(num_epochs).batch(batch_size)
-        batch_features, batch_labels = tf.compat.v1.data.make_one_shot_iterator(dataset=dataset).get_next()
-        return batch_features, batch_labels
-    return _input_fn
+    transformed_metadata = metadata_io.read_metadata(
+        os.path.join(args['metadata_path'])
+        )
+    
+    return input_fn_maker.build_training_input_fn(
+        metadata = transformed_metadata,
+        file_pattern = (input_paths[0] if len(input_paths) == 1 else input_paths),
+        training_batch_size = batch_size,
+        label_keys=[LABEL_COLUMN],
+        reader = gzip_reader_fn,
+        key_feature_name = KEY_FEATURE_COLUMN,
+        randomize_input = (mode != tf.estimator.ModeKeys.EVAL),
+        num_epochs = (1 if mode == tf.estimator.ModeKeys.EVAL else None)
+        )
 
 # Create an estimator that we are going to train and evaluate
 def train_and_evaluate(args):
-    tf.compat.v1.summary.FileWriterCache.clear() # ensure filewriter cache is clear for TensorBoard events file
+    tf.compat.v1.summary.FileWriterCache.clear() # Ensure filewriter cache is clear for TensorBoard events file.
     estimator = build_estimator(
         model_dir=args['output_dir'],
         nbuckets=args['nbuckets'], 
-        hidden_units=args['hidden_units']
+        hidden_units=args['hidden_units'].split(' ')
         )
     train_spec = tf.estimator.TrainSpec(
-        input_fn = read_dataset(args['train_data_paths'],
-                                batch_size = args['train_batch_size'],
-                                mode = tf.estimator.ModeKeys.TRAIN),
+        input_fn = read_dataset(args, tf.estimator.ModeKeys.TRAIN),
         max_steps = args['train_steps']
         )
-    exporter = tf.estimator.LatestExporter('exporter', serving_input_fn)
+    exporter = tf.estimator.LatestExporter('exporter', make_serving_input_fn)
     eval_spec = tf.estimator.EvalSpec(
-        input_fn = read_dataset(args['eval_data_paths'],
-                                batch_size = 10000,
-                                mode = tf.estimator.ModeKeys.EVAL
-                                ),
-        steps = 100,
+        input_fn = read_dataset(args, tf.estimator.ModeKeys.TRAIN),
+        steps = None,
         exporters = exporter
         )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
-
-@tf.function
-def add_eval_metrics(labels, predictions):
+    
+# If we want to use TFrecords instead of csv
+def gzip_reader_fn():
     """
-    """ 
-    pred_values = predictions['predictions']
-    return {
-        'rmse': tf.metrics.RootMeanSquaredError(labels, pred_values)
-    }
-
+    """
+    return tf.compat.v1.TFRecordReader(
+        options=tf.compat.v1.python_io.TFRecordOptions(compression_type = tf.compat.v1.python_io.TFRecordCompressionType.GZIP)
+        )
 
 
 

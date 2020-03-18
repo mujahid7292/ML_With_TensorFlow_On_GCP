@@ -136,92 +136,85 @@ def make_serving_input_fn_for_base64_json(args):
         raw_metadata, 
         transform_savemodel_dir,
         exclude_raw_keys=[LABEL_COLUMN])
-###############################################################################################
-###############################################################################################
 
-# Create a feature engineering function that will be used in the input and the serving input
-# functions
-def add_engineered(features):
+def make_serving_input_fn(args):
     """
-    With this function we will do feature
-    engineering in tensorflow.
     """
-    lat1 = features['pickuplat']
-    lat2 = features['dropofflat']
-    lon1 = features['pickuplon']
-    lon2 = features['dropofflon']
-    latdiff = lat1 - lat2
-    londiff = lon1 - lon2
+    transform_savemodel_dir = (os.path.join(args['metadata_path'], 'transform_fn'))
+    def _input_fn():
+        """
+        """
+        # Place holder for all the raw input
+        feature_placeholders = {
+            column_name: tf.placeholder(tf.float32, [None]) for column_name in 'pickuplon,pickuplat,dropofflon,dropofflat'.split(',')
+        }
+        feature_placeholders['passengers'] = tf.placeholder(tf.int64, [None])
+        feature_placeholders['dayofweek'] = tf.placeholder(tf.string, [None])
+        feature_placeholders['hourofday'] = tf.placeholder(tf.int64, [None])
+        feature_placeholders['key'] = tf.placeholder(tf.string, [None])
 
-    # Set features for distance with sign that indicates direction
-    features['latdiff'] = latdiff
-    features['londiff'] = londiff
-    dist = tf.sqrt(latdiff * latdiff + londiff * londiff)
-    features['euclidean'] = dist
-
-    return features
-
-
+        # Transform using saved model `transform_fn`
+        _, features = saved_transform_io.partially_apply_saved_transform(
+            transform_savemodel_dir,
+            feature_placeholders
+            )
+        return tf.estimator.export.ServingInputReceiver(features, feature_placeholders)
+    return _input_fn
 
 # Create an input function that stores your data into a dataset
-def read_dataset(filename, mode, batch_size = 512):
-    def _input_fn():
-        def decode_csv(value_column):
-            columns = tf.decode_csv(value_column, record_defaults = DEFAULTS)
-            features = dict(zip(CSV_COLUMNS, columns))
-            label = features.pop(LABEL_COLUMN)
-            return add_engineered(features), label
+def read_dataset(args, mode):
+    """
+    """
+    batch_size = args['train_batch_size']
+
+    if mode == tf.estimator.ModeKeys.TRAIN:
+        input_paths = args['train_data_paths']
+    else:
+        input_paths = args['eval_data_paths']
     
-        # Create list of files that match pattern
-        file_list = tf.gfile.Glob(filename)
-
-        # Create dataset from file list
-        dataset = tf.data.TextLineDataset(file_list).map(decode_csv)
-        
-        if mode == tf.estimator.ModeKeys.TRAIN:
-            num_epochs = None # indefinitely
-            dataset = dataset.shuffle(buffer_size = 10 * batch_size)
-        else:
-            num_epochs = 1 # end-of-input after this
-
-        dataset = dataset.repeat(num_epochs).batch(batch_size)
-        batch_features, batch_labels = dataset.make_one_shot_iterator().get_next()
-        return batch_features, batch_labels
-    return _input_fn
+    transformed_metadata = metadata_io.read_metadata(
+        os.path.join(args['metadata_path']),
+        'transformed_metadata'
+        )
+    
+    return input_fn_maker.build_training_input_fn(
+        metadata = transformed_metadata,
+        file_pattern = (input_paths[0] if len(input_paths) == 1 else input_paths),
+        training_batch_size = batch_size,
+        label_keys=[LABEL_COLUMN],
+        reader = gzip_reader_fn,
+        key_feature_name = KEY_FEATURE_COLUMN,
+        randomize_input = (mode != tf.estimator.ModeKeys.EVAL),
+        num_epochs = (1 if mode == tf.estimator.ModeKeys.EVAL else None)
+        )
 
 # Create an estimator that we are going to train and evaluate
 def train_and_evaluate(args):
-    tf.summary.FileWriterCache.clear() 
+    tf.summary.FileWriterCache.clear() # Ensure filewriter cache is clear for TensorBoard events file.
     estimator = build_estimator(
         model_dir=args['output_dir'],
         nbuckets=args['nbuckets'], 
-        hidden_units=args['hidden_units']
+        hidden_units=args['hidden_units'].split(' ')
         )
     train_spec = tf.estimator.TrainSpec(
-        input_fn = read_dataset(args['train_data_paths'],
-                                batch_size = args['train_batch_size'],
-                                mode = tf.estimator.ModeKeys.TRAIN),
+        input_fn = read_dataset(args, tf.estimator.ModeKeys.TRAIN),
         max_steps = args['train_steps']
         )
-    exporter = tf.estimator.LatestExporter('exporter', serving_input_fn)
+    exporter = tf.estimator.LatestExporter('exporter', make_serving_input_fn)
     eval_spec = tf.estimator.EvalSpec(
-        input_fn = read_dataset(args['eval_data_paths'],
-                                batch_size = 10000,
-                                mode = tf.estimator.ModeKeys.EVAL
-                                ),
-        steps = 100,
+        input_fn = read_dataset(args, tf.estimator.ModeKeys.TRAIN),
+        steps = None,
         exporters = exporter
         )
     tf.estimator.train_and_evaluate(estimator, train_spec, eval_spec)
-
-def add_eval_metrics(labels, predictions):
+    
+# If we want to use TFrecords instead of csv
+def gzip_reader_fn():
     """
-    """ 
-    pred_values = predictions['predictions']
-    return {
-        'rmse': tf.metrics.RootMeanSquaredError(labels, pred_values)
-    }
-
+    """
+    return tf.TFRecordReader(
+        options=tf.python_io.TFRecordOptions(compression_type = tf.python_io.TFRecordCompressionType.GZIP)
+        )
 
 
 

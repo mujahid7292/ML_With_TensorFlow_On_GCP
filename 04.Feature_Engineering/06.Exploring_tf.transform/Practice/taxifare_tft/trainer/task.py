@@ -20,7 +20,7 @@ import argparse
 import json
 import os
 import tensorflow as tf
-from . import model
+from . import model_for_cloud
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
@@ -59,6 +59,13 @@ if __name__ == '__main__':
         default = 10,
         type = int
     )
+
+    # TensorFlow Transform args
+    parser.add_argument(
+        '--metadata_path',
+        help = 'GCS or local path to transformed metadata if using TFT',
+        default = './preproc/metadata'
+    )
     
     # Training arguments
     parser.add_argument(
@@ -71,7 +78,7 @@ if __name__ == '__main__':
         '--hidden_units',
         help = 'Hidden layer sizes to use for DNN feature columns -- provide space-separated layers',
         type = str,
-        default = [128, 32, 4]
+        default = "128 32 4"
     )
     parser.add_argument(
         '--output_dir',
@@ -97,11 +104,6 @@ if __name__ == '__main__':
         default = 1,
         type = int
     )
-    parser.add_argument(
-        '--format',
-        help= "Is the input data format is csv or tf_record",
-        default='csv'
-    )
 
     args = parser.parse_args()
     arguments = args.__dict__
@@ -122,6 +124,6 @@ if __name__ == '__main__':
     # Run the training job
     # Run the training job:
     try:
-        model.train_and_evaluate(arguments)
+        model_for_cloud.train_and_evaluate(arguments)
     except:
         traceback.print_exc()

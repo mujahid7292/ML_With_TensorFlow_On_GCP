@@ -59,6 +59,13 @@ if __name__ == '__main__':
         default = 10,
         type = int
     )
+
+    # TensorFlow Transform args
+    parser.add_argument(
+        '--metadata_path',
+        help = 'GCS or local path to transformed metadata if using TFT',
+        default = './preproc/metadata'
+    )
     
     # Training arguments
     parser.add_argument(
@@ -71,7 +78,7 @@ if __name__ == '__main__':
         '--hidden_units',
         help = 'Hidden layer sizes to use for DNN feature columns -- provide space-separated layers',
         type = str,
-        default = [128, 32, 4]
+        default = "128 32 4"
     )
     parser.add_argument(
         '--output_dir',
@@ -96,11 +103,6 @@ if __name__ == '__main__':
         help = 'Minimum number of training steps between evaluations',
         default = 1,
         type = int
-    )
-    parser.add_argument(
-        '--format',
-        help= "Is the input data format is csv or tf_record",
-        default='csv'
     )
 
     args = parser.parse_args()
