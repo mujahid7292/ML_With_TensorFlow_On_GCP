@@ -1,0 +1,520 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://googlecoursera.qwiklabs.com/focuses/35373 -->
+<html lang="en" class="mdl-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+<meta content="[]" name="active-experiments">
+<meta content="{&quot;userId&quot;:1018107}" name="help-api-product-data">
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="/irrXjBMEgsVAoC6PFyydqXsAwEj3hIlowUtjpc88q7ydjDtcrpHmBAEgmT5eWJpL9bIrQY2/mvoFbM6GeJUGQ==">
+<title>Training on Cloud AI Platform | Qwiklabs</title>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" name="viewport">
+<meta content="This lab is part of a lab series where you train, evaluate, and deploy a AI model to predict a baby’s weight.  
+n this lab #5, you will do distributed training and hyperparameter tuning on AI Platform." name="description">
+<meta content="Qwiklabs" name="author">
+<meta content="1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0" name="google-site-verification">
+<meta content="Training on Cloud AI Platform | Qwiklabs" property="og:title">
+<meta content="website" property="og:type">
+<meta content="/favicon-144.png" property="og:image">
+<meta content="Qwiklabs" property="og:site_name">
+<meta content="This lab is part of a lab series where you train, evaluate, and deploy a AI model to predict a baby’s weight.  
+n this lab #5, you will do distributed training and hyperparameter tuning on AI Platform." property="og:description">
+<meta content="/qwiklabs_logo_900x887.png" property="og:logo" size="900x887">
+<meta content="/qwiklabs_logo_994x187.png" property="og:logo" size="994x187">
+<meta content="#3681E4" property="msapplication-TileColor">
+<meta content="/favicon-144.png" property="msapplication-TileImage">
+<link href="https://googlecoursera.qwiklabs.com/favicon-32.png" rel="shortcut icon">
+<link color="#3681E4" href="https://googlecoursera.qwiklabs.com/favicon-svg.svg" rel="mask-icon">
+<link href="https://googlecoursera.qwiklabs.com/favicon-180.png" rel="apple-touch-icon-precomposed">
+<link rel="stylesheet" media="screen" href="./Training on Cloud AI Platform _ Qwiklabs_files/css">
+
+
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type="text/javascript" async="" src="./Training on Cloud AI Platform _ Qwiklabs_files/js"></script><script type="text/javascript" async="" src="./Training on Cloud AI Platform _ Qwiklabs_files/analytics.js"></script><script type="text/javascript" async="" src="./Training on Cloud AI Platform _ Qwiklabs_files/analytics.min.js"></script><script type="text/javascript" id="www-widgetapi-script" src="./Training on Cloud AI Platform _ Qwiklabs_files/www-widgetapi.js" async=""></script><script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Saifullah al","lastname":"Mujahid","fullname":"Saifullah al Mujahid","company":"Login with Google","email":"mujahid7292@gmail.com","origin":"google-run, direct, nEHJKyBzts1wgcYE7A3w","subscriptions":0,"id":"594ecfdd6abffec37cc71dd7002ec821","qlCreatedAt":"2018-08-09 10:26:13 UTC","optIn":true};gon.segment="j4Im8pqIko0Lxq4wVVZWMPMM0EroHUvb";gon.deployment="googlecoursera-run";
+//]]>
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id="ze-snippet" src="./Training on Cloud AI Platform _ Qwiklabs_files/snippet.js"></script>
+
+
+
+<link rel="stylesheet" media="all" href="./Training on Cloud AI Platform _ Qwiklabs_files/application-3da541dd71f92e39564c03465c99f32628556dec01f4d39b904adbced14a24aa.css">
+<script>
+  EVENT_SOURCE_BASE_URL = "https://googlecoursera-run.qwiklabs.com/nchan-sub?id=";
+</script>
+<script src="./Training on Cloud AI Platform _ Qwiklabs_files/webcomponents-loader.js"></script><script src="./Training on Cloud AI Platform _ Qwiklabs_files/webcomponents-hi.js"></script>
+<script src="./Training on Cloud AI Platform _ Qwiklabs_files/hallofmirrors-eae6675400af78e1654e424d2281253062e59cd03fa85f6c1e9b71fcef236ded.js"></script><script async="" src="./Training on Cloud AI Platform _ Qwiklabs_files/lazy.min.js"></script>
+<script src="./Training on Cloud AI Platform _ Qwiklabs_files/iframe_api"></script>
+<script src="./Training on Cloud AI Platform _ Qwiklabs_files/vendor-45d462772c30000424907184f70c7157e95fb6227698d1671c5051818a6f60d8.js"></script>
+<script src="./Training on Cloud AI Platform _ Qwiklabs_files/application-c23343461fee67994bfc26ae6509cf3e86bcddd7d48088f4de19fb8c0ed6eb13.js"></script>
+</head>
+<body class="focuses focuses-show lab-show l-full no-nav">
+<div class="header-container">
+<div class="header">
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect header__button header__button--nav header__nav-panel-button js-nav-toggle" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">menu</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header__title">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--nav" href="https://www.coursera.org/" data-upgraded=",MaterialButton,MaterialRipple"><ql-icon>arrow_back</ql-icon><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+
+<h1 class="headline-5">
+Training on Cloud AI Platform
+</h1>
+</div>
+<div class="header__actions">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--action header__button--search js-header-search-bar-button" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">search</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" id="toggle-lab-control-panel" href="javascript:;" data-upgraded=",MaterialButton,MaterialRipple" tabindex="0"><i class="material-icons">description</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a><div class="mdl-tooltip js-tooltip" data-mdl-for="toggle-lab-control-panel" data-upgraded=",MaterialTooltip">
+Toggle Lab Panel
+</div>
+
+<ql-help context="lab" productdata="{&quot;userId&quot;:1018107}" data-analytics-action="opened_help" data-analytics-label="lab"></ql-help>
+<a class="header-my-account-button mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-my-account-button" data-upgraded=",MaterialButton,MaterialRipple">
+<img class="avatar " alt="avatar image" src="./Training on Cloud AI Platform _ Qwiklabs_files/446d5a9572a0ed0a6dd56cb9e8666994.jpeg">
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header-my-account-menu js-my-account-menu">
+<div class="card elevation-2 no-padding">
+<div class="my-account-menu__top">
+<img class="avatar " alt="avatar image" src="./Training on Cloud AI Platform _ Qwiklabs_files/446d5a9572a0ed0a6dd56cb9e8666994.jpeg">
+<div class="my-account-menu__info">
+<h4 class="subtitle-headline-1">
+Saifullah al Mujahid
+</h4>
+<p class="body-2 text--gray">
+<span>mujahid7292@gmail.com</span>
+</p>
+<a class="button" href="https://googlecoursera.qwiklabs.com/my_account/profile">My Account</a>
+</div>
+</div>
+<div class="my-account-menu__bottom">
+<a class="text--green subtitle-headline-2" href="https://googlecoursera.qwiklabs.com/my_account/credits">0 Credits
+</a><a data-analytics-action="clicked_sign_out" class="button button--hairline" rel="nofollow" data-method="delete" href="https://googlecoursera.qwiklabs.com/users/sign_out">Sign Out</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class="header__search-bar js-header-search-bar">
+<form id="catalog-search-mobile" onsubmit="ql.catalogSearchFilter(); return false;" action="https://googlecoursera.qwiklabs.com/searches/elasticsearch" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="/irrXjBMEgsVAoC6PFyydqXsAwEj3hIlowUtjpc88q7ydjDtcrpHmBAEgmT5eWJpL9bIrQY2/mvoFbM6GeJUGQ==">
+<input type="text" name="keywords" id="keywords" placeholder="Search" maxlength="255" aria-label="catalog search bar">
+</form>
+
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">close</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+</div>
+
+<nav class="nav-bar">
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/"><ql-icon class="nav-bar__item__icon">
+home
+</ql-icon>
+<span class="nav-bar__item__label">
+Home
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/catalog"><ql-icon class="nav-bar__item__icon">
+school
+</ql-icon>
+<span class="nav-bar__item__label">
+Catalog
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_learning"><ql-icon class="nav-bar__item__icon">
+event_note
+</ql-icon>
+<span class="nav-bar__item__label">
+My Learning
+</span>
+</a>
+</nav>
+
+<nav class="nav-panel js-nav-panel">
+<div class="nav-panel__logo">
+<div class="logo logo--blue"></div>
+</div>
+<a title="Home" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/"><ql-icon class="nav-panel__item__icon">
+home
+</ql-icon>
+<div class="nav-panel__item__label">
+Home
+</div>
+</a>
+<a title="Catalog" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/catalog"><ql-icon class="nav-panel__item__icon">
+school
+</ql-icon>
+<div class="nav-panel__item__label">
+Catalog
+</div>
+</a>
+<a title="My Learning" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_learning"><ql-icon class="nav-panel__item__icon">
+event_note
+</ql-icon>
+<div class="nav-panel__item__label">
+My Learning
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a title="Profile" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/profile"><ql-icon class="nav-panel__item__icon">
+account_circle
+</ql-icon>
+<div class="nav-panel__item__label">
+Profile
+</div>
+</a>
+<a title="Credits &amp; Subscriptions" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/credits"><ql-icon class="nav-panel__item__icon">
+money
+</ql-icon>
+<div class="nav-panel__item__label">
+Credits &amp; Subscriptions
+</div>
+</a>
+<a title="Security" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/security"><ql-icon class="nav-panel__item__icon">
+security
+</ql-icon>
+<div class="nav-panel__item__label">
+Security
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a class="nav-panel__item" tabindex="-1" href="https://googlecoursera.qwiklabs.com/focuses/35373#"><ql-help>
+<div class="nav-panel__help-item">
+<ql-icon class="nav-panel__item__icon">help</ql-icon>
+<div class="nav-panel__item__label">Help</div>
+</div>
+</ql-help>
+</a><div class="nav-panel__small-links">
+<a tabindex="-1" href="https://googlecoursera.qwiklabs.com/privacy_policy">Privacy</a>
+<a tabindex="-1" href="https://googlecoursera.qwiklabs.com/terms_of_service">Terms</a>
+</div>
+</nav>
+<div class="nav-panel__overlay js-nav-toggle"></div>
+
+<main class="js-main">
+<span class="hidden" id="flash-sibling-before"></span>
+
+<div class="l-main-wrapper" id="main-wrapper">
+
+
+
+
+
+
+
+<div class="js-lab-state" data-analytics-payload="{&quot;label&quot;:&quot;Training on Cloud AI Platform&quot;,&quot;lab_name&quot;:&quot;Training on Cloud AI Platform&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;googlecoursera-run&quot;}" data-focus-id="35373" data-lab-billing-limit="0.0" data-lab-duration="7200" data-parent="classroom"></div>
+<ql-lab-control-panel class="js-lab-control-panel l-lab-control-panel" connectiondetails="[]" connectionfiles="[]" labcontrolbutton="{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}" labtimer="{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}" studentresources="[]"></ql-lab-control-panel>
+<div class="l-lab-main-body">
+<div class="js-lab-content lab-content">
+<div class="alert alert--fake js-alert">
+<p class="alert__message js-alert-message"></p>
+<a class="alert__close js-alert-close">
+<i class="fa fa-times"></i>
+</a>
+<iframe class="l-ie-iframe-fix" src="./Training on Cloud AI Platform _ Qwiklabs_files/saved_resource.html"></iframe>
+</div>
+<div class="lab-content__markdown-wrapper">
+<div class="lab-preamble">
+<h1 class="lab-preamble__title">
+Training on Cloud AI Platform
+</h1>
+<div class="lab-preamble__details subtitle-headline-1">
+<span>2 hours </span>
+<span>Free</span>
+<div class="lab__rating">
+<a href="https://googlecoursera.qwiklabs.com/focuses/35373/reviews?parent=catalog"><div class="rateit" data-rateit-readonly="true" data-rateit-value="4.0926"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 65.4816px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+
+</a><a data-target="#lab-review-modal" data-toggle="modal">
+Rate Lab
+</a>
+</div>
+</div>
+</div>
+
+<div class="lab-content__inner-wrapper">
+<div class="js-markdown-instructions lab-content__markdown markdown-lab-instructions" id="markdown-lab-instructions">
+
+
+
+<h2 id="step1">Overview</h2>
+<p><em>Duration is 1 min</em></p>
+<p>This lab is part of a lab series where you train, evaluate, and deploy a AI model to predict a baby's weight.</p>
+<p>In this lab #5, you will do distributed training and hyperparameter tuning on Cloud AI Platform.</p>
+<p><img alt="22386898f5514bc5.png" src="./Training on Cloud AI Platform _ Qwiklabs_files/My5ARmnYrjcjVEHyKAUsviP4LI7bNHrkymC2zHPS+pE="></p>
+<h3>What you learn</h3>
+<p>In this lab, you will learn how to:</p>
+<ul>
+<li>
+<p>Do distributed training using Cloud AI Platform Training Service</p>
+</li>
+<li>
+<p>Improve model accuracy using hyperparameter tuning</p>
+</li>
+</ul>
+<h2 id="step2">Setup</h2>
+<p>For each lab, you get a new GCP project and set of resources for a fixed time at no cost.</p>
+<ol>
+<li>
+<p>Make sure you signed into Qwiklabs using an <strong>incognito window</strong>.</p>
+</li>
+<li>
+<p>Note the lab's access time (for example, <img alt="img/time.png" src="./Training on Cloud AI Platform _ Qwiklabs_files/aZQJ4BT7uCmM9XR6BTXgTRP1Hfu1T7q6V+cnbdEsbpU="> and make sure you can finish in that time block.</p>
+</li>
+</ol>
+<aside> <p>
+  There is no pause feature. You can restart if needed, but you have to start at the beginning.
+  </p>
+
+</aside>
+<ol start="3">
+<li>
+<p>When ready, click <img alt="img/start_lab.png" src="./Training on Cloud AI Platform _ Qwiklabs_files/XE8x7uvQokyubNwnYKKc+vBBNrMlo5iNZiDDzQQ3Ddo=">.</p>
+</li>
+<li>
+<p>Note your lab credentials. You will use them to sign in to Cloud Platform Console.
+<img alt="img/open_google_console.png" src="./Training on Cloud AI Platform _ Qwiklabs_files/0d78dhX6IVMVWmixCPPSBbmi5O2GPokCXf1Ps1AkTgI="></p>
+</li>
+<li>
+<p>Click <strong>Open Google Console</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Use another account</strong> and copy/paste credentials for <strong>this</strong> lab into the prompts.</p>
+</li>
+</ol>
+<aside class="warning"><p>
+  If you use other credentials, you'll get errors or <strong>incur charges</strong>.
+  </p>
+</aside>
+<ol start="7">
+<li>Accept the terms and skip the recovery resource page.</li>
+</ol>
+<aside class="warning"><p>
+  Do not click <strong>End Lab</strong> unless you are finished with the lab or want to restart it. This clears your work and removes the project.
+  </p>
+</aside>
+
+<h2 id="step3">Create Storage Bucket</h2>
+<p><em>Duration is 2 min</em></p>
+<p>Create a bucket using the GCP console:</p>
+<p><strong>Step 1</strong></p>
+<p>In your GCP Console, click on the <strong>Navigation menu</strong> (<img alt="menu.png" src="./Training on Cloud AI Platform _ Qwiklabs_files/LyLHJ5I3gtYdRN1pHDZ2JK2vbd1sM6W2viT0OzyRPTs=">), and select <strong>Storage</strong>.</p>
+<p><strong>Step 2</strong></p>
+<p>Click on <strong>Create bucket</strong>.</p>
+<p><strong>Step 3</strong></p>
+<p>Choose a Regional bucket and set a unique name (use your project ID because it is unique).  Then, click <strong>Create</strong>.</p>
+
+<h2 id="step4">Launch AI Platform Notebooks</h2>
+<p>To launch AI Platform Notebooks:</p>
+<p><strong>Step 1</strong></p>
+<p>Click on the <strong>Navigation Menu</strong>. Navigate to <strong>AI Platform</strong>, then to <strong>Notebooks</strong>.</p>
+<p><img alt="Open new notebook" src="./Training on Cloud AI Platform _ Qwiklabs_files/jH5_Ispr88moxsjUKc2TQdpRvqUfNvj098DG3ZRQe+4="></p>
+<p><strong>Step 2</strong></p>
+<p>On the Notebook instances page, click <img alt="NEW INSTANCE" src="./Training on Cloud AI Platform _ Qwiklabs_files/YI0InqyQhTRNsEIGzrufyXjMtsdrwKwspeNXtPlPPeY=">. Select a <code>1.XX</code> version of TensorFlow (not a 2.0) <em>without GPUs</em>. In the following example, you would select <strong>Tensorflow Enterprise 1.15</strong> &gt; <strong>Without GPUs</strong>:</p>
+<p><img alt="New instance, TensorFlow 1.x" src="./Training on Cloud AI Platform _ Qwiklabs_files/5+wKu1qmMIZOnkr3dVugTSjyWPWKLEESHJOPKM+Sbos="></p>
+<p>Tensorflow 1.XX versions change semi-frequently, so the version you pick may be different.</p>
+<p>In the pop-up, confirm the name of the deep learning VM and click <strong>Create</strong>.</p>
+<p><img alt="Create new VM" src="./Training on Cloud AI Platform _ Qwiklabs_files/+rmInxmD0MC2J6eKAClJVNuLvRJFR4vHFLsamqi_9wY="></p>
+<p>The new VM will take 2-3 minutes to start.</p>
+<p><strong>Step 3</strong></p>
+<p>Click <strong>Open JupyterLab</strong>. A JupyterLab window will open in a new tab.</p>
+<p><img alt="JupyterLab" src="./Training on Cloud AI Platform _ Qwiklabs_files/pwhtoT2OOAq8DamQHYjk1TYcoAuOQTwkoYM5qglV1AQ="></p>
+
+<h2 id="step5">Clone course repo within your AI Platform Notebooks instance</h2>
+<p>To clone the <code>training-data-analyst</code> notebook in your JupyterLab instance:</p>
+<p><strong>Step 1</strong></p>
+<p>In JupyterLab, click the Terminal icon to open a new terminal.</p>
+<p><img alt="Open Terminal" src="./Training on Cloud AI Platform _ Qwiklabs_files/JE+lWdvoG3bIONccjrfxprJngYD2NsSfc0JKnOQ8eL8="></p>
+<p><strong>Step 2</strong></p>
+<p>At the command-line prompt, type in the following command and press Enter.</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">git clone https</span><span class="pun">://</span><span class="pln">github</span><span class="pun">.</span><span class="pln">com</span><span class="pun">/</span><span class="typ">GoogleCloudPlatform</span><span class="pun">/</span><span class="pln">training</span><span class="pun">-</span><span class="pln">data</span><span class="pun">-</span><span class="pln">analyst </span></code><button class="button button--copy js-copy-button-0"><i class="fa fa-clipboard"></i></button></pre>
+<p><strong>Step 3</strong></p>
+<p>Confirm that you have cloned the repository by double clicking on the <code>training-data-analyst</code> directory and ensuring that you can see its contents. The files for all the Jupyter notebook-based labs throughout this course are available in this directory.</p>
+<p><img alt="Training data analyst repository" src="./Training on Cloud AI Platform _ Qwiklabs_files/qzsmg9brDlDnoCGfuL1VFCaAmAE9vg3c91UZbaMuKDI="></p>
+
+<h2 id="step6">Training on Cloud AI Platform</h2>
+<p><em>Duration is 15 min</em></p>
+<p><strong>Step 1</strong></p>
+<p>In the notebook interface, navigate to <strong>training-data-analyst &gt; courses &gt; machine_learning &gt; deepdive &gt; 06_structured &gt; labs</strong> and open <strong>5_train.ipynb</strong>.</p>
+<p><strong>Step 2</strong></p>
+<p>In the notebook interface, click on <strong>Edit &gt; Clear All Outputs</strong> (click on Edit, then in the drop-down menu, select Clear All Outputs).</p>
+<ul>
+<li>If you notice sections marked "Lab Task", you will need to create a new code cell and write/complete code to achieve the task.</li>
+<li>Some lab tasks include starter code. In such cells, look for lines marked #TODO.</li>
+<li>Hints may also be provided for the tasks to guide you along. Highlight the text to read the hints (they are in white text).</li>
+<li>If you need more help, you may take a look at the complete solution by navigating to : <strong>training-data-analyst &gt; courses &gt; machine_learning &gt; deepdive &gt; 06_structured</strong> and open: <strong>5_train.ipynb</strong>
+</li>
+</ul>
+<aside class="warning"><p>Note: When doing copy/paste of Python code, please be careful about indentation</p>
+</aside>
+<h2 id="step7">End your lab</h2>
+<p>When you have completed your lab, click <strong>End Lab</strong>. Qwiklabs removes the resources you’ve used and cleans the account for you.</p>
+<p>You will be given an opportunity to rate the lab experience. Select the applicable number of stars, type a comment, and then click <strong>Submit</strong>.</p>
+<p>The number of stars indicates the following:</p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+<p>You can close the dialog box if you don't want to provide feedback.</p>
+<p>For feedback, suggestions, or corrections, please use the <strong>Support</strong> tab.</p>
+
+<p>Last Tested Date: 12-10-2018</p>
+<p>Last Updated Date: 07-01-2019</p>
+<p>©2019 Google LLC All rights reserved. Google and the Google logo are trademarks of Google LLC. All other company and product names may be trademarks of the respective companies with which they are associated.</p>
+
+
+
+</div>
+<div class="js-lab-content-outline lab-content__outline">
+<a href="https://googlecoursera.qwiklabs.com/focuses/35373#step1" class="is-active">Overview</a><a href="https://googlecoursera.qwiklabs.com/focuses/35373#step2" class="">Setup</a><a href="https://googlecoursera.qwiklabs.com/focuses/35373#step3">Create Storage Bucket</a><a href="https://googlecoursera.qwiklabs.com/focuses/35373#step4">Launch AI Platform Notebooks</a><a href="https://googlecoursera.qwiklabs.com/focuses/35373#step5">Clone course repo within your AI Platform Notebooks instance</a><a href="https://googlecoursera.qwiklabs.com/focuses/35373#step6">Training on Cloud AI Platform</a><a href="https://googlecoursera.qwiklabs.com/focuses/35373#step7">End your lab</a>
+</div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+<div class="lab-introduction js-lab-introduction is-hidden">
+<div class="lab-introduction__inner">
+<h1 class="headline-1">Welcome to Your First Lab!</h1>
+<ql-icon-button class="js-skip-button">close</ql-icon-button>
+<div class="lab-introduction__video">
+<iframe allow="autoplay; encrypted-media" allowfullscreen="" frameborder="0" id="lab-introduction" src="./Training on Cloud AI Platform _ Qwiklabs_files/yF7EDXKTmoQ.html"></iframe>
+</div>
+<a class="js-skip-button button button--outline">Skip this video</a>
+</div>
+</div>
+
+
+
+</div>
+</main>
+<div class="modal fade" id="lab-details-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<div class="modal-body">
+<p class="l-mbm">
+This lab is part of a lab series where you train, evaluate, and deploy a AI model to predict a baby’s weight.  
+n this lab #5, you will do distributed training and hyperparameter tuning on AI Platform.
+</p>
+<p class="small-label l-mbs">
+<strong>
+Duration:
+</strong>
+0m setup
+·
+120m access
+·
+90m completion
+</p>
+<p class="small-label l-mbs">
+<span><strong>Levels: </strong>advanced</span>
+</p>
+<p class="small-label">
+<strong>
+Permalink:
+</strong>
+<a href="https://googlecoursera.qwiklabs.com/catalog_lab/1986">https://googlecoursera.qwiklabs.com/catalog_lab/1986</a>
+</p>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Got It
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Training on Cloud AI Platform _ Qwiklabs_files/saved_resource(1).html"></iframe>
+</div>
+<div class="modal fade" id="lab-review-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="https://googlecoursera.qwiklabs.com/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="✓"><div class="modal-body">
+<p class="label">
+How satisfied are you with this lab?*
+</p>
+<div class="rateit js-rateit" data-rateit-max="5" data-rateit-min="0" data-rateit-resetable="false" data-rateit-step="1" data-rateit-value="0"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 0px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+<div class="l-mtm">
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="1018107" name="lab_review[user_id]" id="lab_review_user_id"></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="4529" name="lab_review[classroom_id]" id="lab_review_classroom_id"></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="1986" name="lab_review[lab_id]" id="lab_review_lab_id"></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="35373" name="lab_review[focus_id]" id="lab_review_focus_id"></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating"></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Comment</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment"></textarea></div></div>
+</div>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Cancel
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<input type="submit" name="commit" value="Submit" disabled="disabled" class="btn mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="submit" data-disabled="false" data-disable-with="Submit" data-upgraded=",MaterialButton,MaterialRipple"><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></input>
+</div>
+</form>
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Training on Cloud AI Platform _ Qwiklabs_files/saved_resource(2).html"></iframe>
+</div>
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    initLabContent( );
+  ql.labOutline.links.init();
+  ql.labOutline.layout.init();
+  initLabReviewModal();
+  ql.labAssessment.init();
+  ql.labIntroduction.init( true );
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?\n","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.\n","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.initHeader();
+  ql.navigation.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+<style>
+  .mdl-layout__container {
+    position: static
+  }
+</style>
+
+
+<iframe data-product="web_widget" title="No content" tabindex="-1" aria-hidden="true" src="./Training on Cloud AI Platform _ Qwiklabs_files/saved_resource(3).html" style="width: 0px; height: 0px; border: 0px; position: absolute; top: -9999px;"></iframe><div><iframe title="Opens a widget where you can chat to one of our agents" id="launcher" tabindex="0" class="zEWidget-launcher zEWidget-launcher--active" style="border: none; background: transparent; z-index: 999998; transform: translateZ(0px); position: fixed; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; opacity: 1; height: 50px; max-height: 551px; min-height: 50px; margin: 10px 20px; right: 0px; bottom: 0px; width: 113px;width: 113px;" src="./Training on Cloud AI Platform _ Qwiklabs_files/saved_resource(4).html"></iframe></div><div><iframe title="Find more information here" id="webWidget" tabindex="-1" class="zEWidget-webWidget " style="border: none; background: transparent; z-index: 999999; transform: translateZ(0px); position: fixed; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; opacity: 0; width: 357px; height: 100%; max-height: 565px; min-height: 150px; margin-left: 8px; margin-right: 8px; top: -9999px; visibility: hidden;" src="./Training on Cloud AI Platform _ Qwiklabs_files/saved_resource(5).html"></iframe></div></body></html>

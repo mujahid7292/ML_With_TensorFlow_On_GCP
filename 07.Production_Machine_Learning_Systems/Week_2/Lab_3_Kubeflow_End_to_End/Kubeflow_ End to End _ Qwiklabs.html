@@ -1,0 +1,797 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://googlecoursera.qwiklabs.com/focuses/35226 -->
+<html lang="en" class="mdl-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+<meta content="[]" name="active-experiments">
+<meta content="{&quot;userId&quot;:1018107}" name="help-api-product-data">
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="l/2gC/3gZFegX/lSbxeZHWR7uZ3Wq6RFviMSyh3YzjkZJ6XASEt39wPtHCluOu1itxNghHPFdIUWTgVghYc1UA==">
+<title>Kubeflow: End to End | Qwiklabs</title>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" name="viewport">
+<meta content="In this hands-on lab, you will install Kubeflow on an empty Kubernetes Engine cluster and use it to train and serve a sequence-to-sequence model using TensorFlow, Keras, and SeldonIO." name="description">
+<meta content="Qwiklabs" name="author">
+<meta content="1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0" name="google-site-verification">
+<meta content="Kubeflow: End to End | Qwiklabs" property="og:title">
+<meta content="website" property="og:type">
+<meta content="/favicon-144.png" property="og:image">
+<meta content="Qwiklabs" property="og:site_name">
+<meta content="In this hands-on lab, you will install Kubeflow on an empty Kubernetes Engine cluster and use it to train and serve a sequence-to-sequence model using TensorFlow, Keras, and SeldonIO." property="og:description">
+<meta content="/qwiklabs_logo_900x887.png" property="og:logo" size="900x887">
+<meta content="/qwiklabs_logo_994x187.png" property="og:logo" size="994x187">
+<meta content="#3681E4" property="msapplication-TileColor">
+<meta content="/favicon-144.png" property="msapplication-TileImage">
+<link href="https://googlecoursera.qwiklabs.com/favicon-32.png" rel="shortcut icon">
+<link color="#3681E4" href="https://googlecoursera.qwiklabs.com/favicon-svg.svg" rel="mask-icon">
+<link href="https://googlecoursera.qwiklabs.com/favicon-180.png" rel="apple-touch-icon-precomposed">
+<link rel="stylesheet" media="screen" href="./Kubeflow_ End to End _ Qwiklabs_files/css">
+
+
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type="text/javascript" async="" src="./Kubeflow_ End to End _ Qwiklabs_files/js"></script><script type="text/javascript" async="" src="./Kubeflow_ End to End _ Qwiklabs_files/analytics.js.download"></script><script type="text/javascript" async="" src="./Kubeflow_ End to End _ Qwiklabs_files/analytics.min.js.download"></script><script type="text/javascript" id="www-widgetapi-script" src="./Kubeflow_ End to End _ Qwiklabs_files/www-widgetapi.js.download" async=""></script><script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Saifullah al","lastname":"Mujahid","fullname":"Saifullah al Mujahid","company":"Login with Google","email":"mujahid7292@gmail.com","origin":"google-run, direct, nEHJKyBzts1wgcYE7A3w","subscriptions":0,"id":"594ecfdd6abffec37cc71dd7002ec821","qlCreatedAt":"2018-08-09 10:26:13 UTC","optIn":true};gon.segment="j4Im8pqIko0Lxq4wVVZWMPMM0EroHUvb";gon.deployment="googlecoursera-run";
+//]]>
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id="ze-snippet" src="./Kubeflow_ End to End _ Qwiklabs_files/snippet.js.download"></script>
+
+
+
+<link rel="stylesheet" media="all" href="./Kubeflow_ End to End _ Qwiklabs_files/application-24120c1aef38a3b99b2e86e178f8f60bb0e27812dc7adfea7b9339d8f1fd09b0.css">
+<script>
+  EVENT_SOURCE_BASE_URL = "https://googlecoursera-run.qwiklabs.com/nchan-sub?id=";
+</script>
+<script src="./Kubeflow_ End to End _ Qwiklabs_files/webcomponents-loader.js.download"></script><script src="./Kubeflow_ End to End _ Qwiklabs_files/webcomponents-hi.js.download"></script>
+<script src="./Kubeflow_ End to End _ Qwiklabs_files/hallofmirrors-f85649837b49ca7f1e74eb3f73279677cceab3c00277677d234942f2a30157a1.js.download"></script><script async="" src="./Kubeflow_ End to End _ Qwiklabs_files/lazy.min.js.download"></script>
+<script src="./Kubeflow_ End to End _ Qwiklabs_files/iframe_api"></script>
+<script src="./Kubeflow_ End to End _ Qwiklabs_files/vendor-45d462772c30000424907184f70c7157e95fb6227698d1671c5051818a6f60d8.js.download"></script>
+<script src="./Kubeflow_ End to End _ Qwiklabs_files/application-7c67c1d428839917a0992758b33da63184c69efa420e5939804ea34d54147a97.js.download"></script>
+</head>
+<body class="focuses focuses-show lab-show l-full no-nav">
+<div class="header-container">
+<div class="header">
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect header__button header__button--nav header__nav-panel-button js-nav-toggle" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">menu</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header__title">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--nav" href="https://www.coursera.org/" data-upgraded=",MaterialButton,MaterialRipple"><ql-icon>arrow_back</ql-icon><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+
+<h1 class="headline-5">
+Kubeflow: End to End
+</h1>
+</div>
+<div class="header__actions">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--action header__button--search js-header-search-bar-button" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">search</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" id="toggle-lab-control-panel" href="javascript:;" data-upgraded=",MaterialButton,MaterialRipple" tabindex="0"><i class="material-icons">description</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a><div class="mdl-tooltip js-tooltip" data-mdl-for="toggle-lab-control-panel" data-upgraded=",MaterialTooltip">
+Toggle Lab Panel
+</div>
+
+<ql-help context="lab" productdata="{&quot;userId&quot;:1018107}" data-analytics-action="opened_help" data-analytics-label="lab"></ql-help>
+<a class="header-my-account-button mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-my-account-button" data-upgraded=",MaterialButton,MaterialRipple">
+<img class="avatar " alt="avatar image" src="./Kubeflow_ End to End _ Qwiklabs_files/446d5a9572a0ed0a6dd56cb9e8666994.jpeg">
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header-my-account-menu js-my-account-menu">
+<div class="card elevation-2 no-padding">
+<div class="my-account-menu__top">
+<img class="avatar " alt="avatar image" src="./Kubeflow_ End to End _ Qwiklabs_files/446d5a9572a0ed0a6dd56cb9e8666994.jpeg">
+<div class="my-account-menu__info">
+<h4 class="subtitle-headline-1">
+Saifullah al Mujahid
+</h4>
+<p class="body-2 text--gray">
+<span>mujahid7292@gmail.com</span>
+</p>
+<a class="button" href="https://googlecoursera.qwiklabs.com/my_account/profile">My Account</a>
+</div>
+</div>
+<div class="my-account-menu__bottom">
+<a class="text--green subtitle-headline-2" href="https://googlecoursera.qwiklabs.com/my_account/credits">5 Credits
+</a><a data-analytics-action="clicked_sign_out" class="button button--hairline" rel="nofollow" data-method="delete" href="https://googlecoursera.qwiklabs.com/users/sign_out">Sign Out</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class="header__search-bar js-header-search-bar">
+<form id="catalog-search-mobile" onsubmit="ql.catalogSearchFilter(); return false;" action="https://googlecoursera.qwiklabs.com/searches/elasticsearch" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="l/2gC/3gZFegX/lSbxeZHWR7uZ3Wq6RFviMSyh3YzjkZJ6XASEt39wPtHCluOu1itxNghHPFdIUWTgVghYc1UA==">
+<input type="text" name="keywords" id="keywords" placeholder="Search" maxlength="255" aria-label="catalog search bar">
+</form>
+
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">close</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+</div>
+
+<nav class="nav-bar">
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/"><ql-icon class="nav-bar__item__icon">
+home
+</ql-icon>
+<span class="nav-bar__item__label">
+Home
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/catalog"><ql-icon class="nav-bar__item__icon">
+school
+</ql-icon>
+<span class="nav-bar__item__label">
+Catalog
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_learning"><ql-icon class="nav-bar__item__icon">
+event_note
+</ql-icon>
+<span class="nav-bar__item__label">
+My Learning
+</span>
+</a>
+</nav>
+
+<nav class="nav-panel js-nav-panel">
+<div class="nav-panel__logo">
+<div class="logo logo--blue"></div>
+</div>
+<a title="Home" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/"><ql-icon class="nav-panel__item__icon">
+home
+</ql-icon>
+<div class="nav-panel__item__label">
+Home
+</div>
+</a>
+<a title="Catalog" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/catalog"><ql-icon class="nav-panel__item__icon">
+school
+</ql-icon>
+<div class="nav-panel__item__label">
+Catalog
+</div>
+</a>
+<a title="My Learning" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_learning"><ql-icon class="nav-panel__item__icon">
+event_note
+</ql-icon>
+<div class="nav-panel__item__label">
+My Learning
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a title="Profile" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/profile"><ql-icon class="nav-panel__item__icon">
+account_circle
+</ql-icon>
+<div class="nav-panel__item__label">
+Profile
+</div>
+</a>
+<a title="Credits &amp; Subscriptions" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/credits"><ql-icon class="nav-panel__item__icon">
+money
+</ql-icon>
+<div class="nav-panel__item__label">
+Credits &amp; Subscriptions
+</div>
+</a>
+<a title="Security" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/security"><ql-icon class="nav-panel__item__icon">
+security
+</ql-icon>
+<div class="nav-panel__item__label">
+Security
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a class="nav-panel__item" tabindex="-1" href="https://googlecoursera.qwiklabs.com/focuses/35226#"><ql-help>
+<div class="nav-panel__help-item">
+<ql-icon class="nav-panel__item__icon">help</ql-icon>
+<div class="nav-panel__item__label">Help</div>
+</div>
+</ql-help>
+</a><div class="nav-panel__small-links">
+<a tabindex="-1" href="https://googlecoursera.qwiklabs.com/privacy_policy">Privacy</a>
+<a tabindex="-1" href="https://googlecoursera.qwiklabs.com/terms_of_service">Terms</a>
+</div>
+</nav>
+<div class="nav-panel__overlay js-nav-toggle"></div>
+
+<main class="js-main">
+<span class="hidden" id="flash-sibling-before"></span>
+
+<div class="l-main-wrapper" id="main-wrapper">
+
+
+
+
+
+
+
+<div class="js-lab-state" data-analytics-payload="{&quot;label&quot;:&quot;Kubeflow: End to End&quot;,&quot;lab_name&quot;:&quot;Kubeflow: End to End&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;googlecoursera-run&quot;}" data-focus-id="35226" data-lab-billing-limit="0.0" data-lab-duration="7200" data-parent="classroom"></div>
+<ql-lab-control-panel class="js-lab-control-panel l-lab-control-panel" connectiondetails="[]" connectionfiles="[]" labcontrolbutton="{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}" labtimer="{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:7200}" studentresources="[]"></ql-lab-control-panel>
+<div class="l-lab-main-body">
+<div class="js-lab-content lab-content">
+<div class="alert alert--fake js-alert">
+<p class="alert__message js-alert-message"></p>
+<a class="alert__close js-alert-close">
+<i class="fa fa-times"></i>
+</a>
+<iframe class="l-ie-iframe-fix" src="./Kubeflow_ End to End _ Qwiklabs_files/saved_resource.html"></iframe>
+</div>
+<div class="lab-content__markdown-wrapper">
+<div class="lab-preamble">
+<h1 class="lab-preamble__title">
+Kubeflow: End to End
+</h1>
+<div class="lab-preamble__details subtitle-headline-1">
+<span>2 hours </span>
+<span>Free</span>
+<div class="lab__rating">
+<a href="https://googlecoursera.qwiklabs.com/focuses/35226/reviews?parent=catalog"><div class="rateit" data-rateit-readonly="true" data-rateit-value="3.9415"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 63.064px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+
+</a><a data-target="#lab-review-modal" data-toggle="modal">
+Rate Lab
+</a>
+</div>
+</div>
+</div>
+
+<div class="lab-content__inner-wrapper">
+<div class="js-markdown-instructions lab-content__markdown markdown-lab-instructions" id="markdown-lab-instructions">
+
+
+
+<h2 id="step1">Introduction</h2>
+<p><img alt="14df38356117980d.png" src="./Kubeflow_ End to End _ Qwiklabs_files/miOFwTwHi2LuG_DZ733QAipK+povCW99t+jGctSb+w0="></p>
+<p><a href="https://www.kubeflow.org/">Kubeflow</a> is a machine learning toolkit for  <a href="https://kubernetes.io/">Kubernetes</a>. The project is dedicated to making <strong>deployments</strong> of machine learning (ML) workflows on Kubernetes simple, portable, and scalable. The goal is to provide a straightforward way to deploy best-of-breed open-source systems for ML to diverse infrastructures.</p>
+<p>A Kubeflow deployment is:</p>
+<ul>
+<li>
+<strong>Portable</strong> - Works on any Kubernetes cluster, whether it lives on Google Cloud Platform (GCP), on-premise, or across providers.</li>
+<li>
+<strong>Scalable</strong> - Can utilize fluctuating resources and is only constrained by the number of resources allocated to the Kubernetes cluster.</li>
+<li>
+<strong>Composable</strong> - Enhanced with service workers to work offline or on low-quality networks</li>
+</ul>
+<p>Kubeflow will let you organize loosely-coupled microservices as a single unit and deploy them to a variety of locations, whether that's a laptop or the cloud. This codelab will walk you through creating your own Kubeflow deployment.</p>
+<h3>What you'll build</h3>
+<p>In this lab, you're going to build a web app that summarizes GitHub issues using a trained model. Upon completion, your infrastructure will contain:</p>
+<ul>
+<li>
+<p>A GKE cluster with standard Kubeflow and Seldon Core installations</p>
+</li>
+<li>
+<p>A training job that uses Tensorflow to generate a Keras model</p>
+</li>
+<li>
+<p>A serving container that provides predictions</p>
+</li>
+<li>
+<p>A UI that uses the trained model to provide summarizations for GitHub issues</p>
+</li>
+</ul>
+<h3>What you'll learn</h3>
+<ul>
+<li>
+<p>How to install  <a href="https://github.com/kubeflow/kubeflow">Kubeflow</a></p>
+</li>
+<li>
+<p>How to run training using the  <a href="https://www.tensorflow.org/">Tensorflow</a> job server to generate a  <a href="https://keras.io/">Keras</a> model</p>
+</li>
+<li>
+<p>How to serve a trained model with  <a href="https://github.com/SeldonIO/seldon-core">Seldon Core</a></p>
+</li>
+<li>
+<p>How to generate and use predictions from a trained model</p>
+</li>
+</ul>
+<h3>What you'll need</h3>
+<ul>
+<li>
+<p>A basic understanding of  <a href="https://kubernetes.io/">Kubernetes</a></p>
+</li>
+<li>
+<p>A  <a href="https://github.com/">GitHub</a> account</p>
+</li>
+</ul>
+<h2 id="step2">Setup the environment</h2>
+<h3>Qwiklabs setup</h3>
+<p>For each lab, you get a new GCP project and set of resources for a fixed time at no cost.</p>
+<ol>
+<li>
+<p>Make sure you signed into Qwiklabs using an <strong>incognito window</strong>.</p>
+</li>
+<li>
+<p>Note the lab's access time (for example, <img alt="img/time.png" src="./Kubeflow_ End to End _ Qwiklabs_files/aZQJ4BT7uCmM9XR6BTXgTRP1Hfu1T7q6V+cnbdEsbpU="> and make sure you can finish in that time block.</p>
+</li>
+</ol>
+<aside> <p>
+  There is no pause feature. You can restart if needed, but you have to start at the beginning.
+  </p>
+
+</aside>
+<ol start="3">
+<li>
+<p>When ready, click <img alt="img/start_lab.png" src="./Kubeflow_ End to End _ Qwiklabs_files/XE8x7uvQokyubNwnYKKc+vBBNrMlo5iNZiDDzQQ3Ddo=">.</p>
+</li>
+<li>
+<p>Note your lab credentials. You will use them to sign in to Cloud Platform Console.
+<img alt="img/open_google_console.png" src="./Kubeflow_ End to End _ Qwiklabs_files/0d78dhX6IVMVWmixCPPSBbmi5O2GPokCXf1Ps1AkTgI="></p>
+</li>
+<li>
+<p>Click <strong>Open Google Console</strong>.</p>
+</li>
+<li>
+<p>Click <strong>Use another account</strong> and copy/paste credentials for <strong>this</strong> lab into the prompts.</p>
+</li>
+</ol>
+<aside class="warning"><p>
+  If you use other credentials, you'll get errors or <strong>incur charges</strong>.
+  </p>
+</aside>
+<ol start="7">
+<li>Accept the terms and skip the recovery resource page.</li>
+</ol>
+<aside class="warning"><p>
+  Do not click <strong>End Lab</strong> unless you are finished with the lab or want to restart it. This clears your work and removes the project.
+  </p>
+</aside>
+
+<h3>Activate Google Cloud Shell</h3>
+<p>Google Cloud Shell is a virtual machine that is loaded with development tools. It offers a persistent 5GB home directory and runs on the Google Cloud.
+Google Cloud Shell provides command-line access to your GCP resources.</p>
+<ol>
+<li>
+<p>In GCP console, on the top right toolbar, click the Open Cloud Shell button.</p>
+<p><img alt="Cloud Shell icon" src="./Kubeflow_ End to End _ Qwiklabs_files/vdY5e_an9ZGXw5a_ZMb1agpXhRGozsOadHURcR8thAQ="></p>
+</li>
+<li>
+<p>Click <strong>Continue</strong>.
+<img alt="cloudshell_continue.png" src="./Kubeflow_ End to End _ Qwiklabs_files/lr3PBRjWIrJ+MQnE8kCkOnRQQVgJnWSg4UWk16f0s_A="></p>
+</li>
+</ol>
+<p>It takes a few moments to provision and connect to the environment. When you are connected, you are already authenticated, and the project is set to your <em>PROJECT_ID</em>. For example:</p>
+<p><img alt="Cloud Shell Terminal" src="./Kubeflow_ End to End _ Qwiklabs_files/hmMK0W41Txk+20bQyuDP9g60vCdBajIS+52iI2f4bYk="></p>
+<p><strong>gcloud</strong> is the command-line tool for Google Cloud Platform. It comes pre-installed on Cloud Shell and supports tab-completion.</p>
+<p>You can list the active account name with this command:</p>
+<pre><code>gcloud auth list
+</code><button class="button button--copy js-copy-button-0"><i class="fa fa-clipboard"></i></button></pre>
+<p>Output:</p>
+<pre><code class="language-output prettyprint prettyprinted" style=""><span class="typ">Credentialed</span><span class="pln"> accounts</span><span class="pun">:</span><span class="pln">
+ </span><span class="pun">-</span><span class="pln"> </span><span class="str">&lt;myaccount&gt;</span><span class="pun">@&lt;</span><span class="pln">mydomain</span><span class="pun">&gt;.</span><span class="pln">com </span><span class="pun">(</span><span class="pln">active</span><span class="pun">)</span></code><button class="button button--copy js-copy-button-1"><i class="fa fa-clipboard"></i></button></pre>
+<p>Example output:</p>
+<pre><code class="language-Output prettyprint prettyprinted" style=""><span class="typ">Credentialed</span><span class="pln"> accounts</span><span class="pun">:</span><span class="pln">
+ </span><span class="pun">-</span><span class="pln"> google1623327_student@qwiklabs</span><span class="pun">.</span><span class="pln">net</span></code><button class="button button--copy js-copy-button-2"><i class="fa fa-clipboard"></i></button></pre>
+<p>You can list the project ID with this command:</p>
+<pre><code>gcloud config list project
+</code><button class="button button--copy js-copy-button-3"><i class="fa fa-clipboard"></i></button></pre>
+<p>Output:</p>
+<pre><code class="language-output prettyprint prettyprinted" style=""><span class="pun">[</span><span class="pln">core</span><span class="pun">]</span><span class="pln">
+project </span><span class="pun">=</span><span class="pln"> </span><span class="str">&lt;project_ID&gt;</span></code><button class="button button--copy js-copy-button-4"><i class="fa fa-clipboard"></i></button></pre>
+<p>Example output:</p>
+<pre><code class="language-Output prettyprint prettyprinted" style=""><span class="pun">[</span><span class="pln">core</span><span class="pun">]</span><span class="pln">
+project </span><span class="pun">=</span><span class="pln"> qwiklabs</span><span class="pun">-</span><span class="pln">gcp</span><span class="pun">-</span><span class="lit">44776a13dea667a6</span></code><button class="button button--copy js-copy-button-5"><i class="fa fa-clipboard"></i></button></pre>
+<ql-infobox>
+  Full documentation of <strong>gcloud</strong> is available on <a href="https://cloud.google.com/sdk/gcloud">Google Cloud gcloud Overview</a>.
+</ql-infobox>
+
+<p>Close the main <strong>Navigation Menu</strong> by clicking the three lines at the top left of the screen (hamburger), next to the Google Cloud Platform logo.</p>
+<h3>Enable Boost Mode</h3>
+<p>In the Cloud Shell window, click on the three dots icon at the far right. Select <strong>Boost Cloud Shell</strong>, then <strong>Restart Cloud Shell in Boost Mode</strong>. This will provision a larger instance for your Cloud Shell session, resulting in speedier Docker builds.</p>
+<p><img alt="6b7d40bb615b632d.png" src="./Kubeflow_ End to End _ Qwiklabs_files/P99qOoQZd0pwaBOPKwj4_4B5pXdg_wcCPrBz2UmLQGM="></p>
+<h3>Download the project files</h3>
+<p>The following commands in Cloud Shell to download and unpack an archive of the  <a href="https://github.com/kubeflow/examples">Kubeflow examples repo</a>, which contains all of the official Kubeflow examples:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">wget https</span><span class="pun">://</span><span class="pln">github</span><span class="pun">.</span><span class="pln">com</span><span class="pun">/</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">archive</span><span class="pun">/</span><span class="pln">v0</span><span class="pun">.</span><span class="lit">2.zip</span><span class="pln">
+unzip v0</span><span class="pun">.</span><span class="lit">2.zip</span><span class="pln">
+mv examples</span><span class="pun">-</span><span class="lit">0.2</span><span class="pln"> $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span></code><button class="button button--copy js-copy-button-6"><i class="fa fa-clipboard"></i></button></pre>
+<h3>Set your GitHub token</h3>
+<p>This lab involves the use of many different files obtained from public repos on GitHub. To prevent rate-limiting, setup an access token with no permissions. This is simply to authorize you as an individual rather than anonymous user.</p>
+<ol>
+<li>
+<p>Navigate to  <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a> and generate a new token with no permissions.</p>
+</li>
+<li>
+<p>Save it somewhere safe. If you lose it, you will need to delete and create a new one.</p>
+</li>
+<li>
+<p>Set the GITHUB_TOKEN environment variable:</p>
+</li>
+</ol>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export \
+  GITHUB_TOKEN</span><span class="pun">=&lt;</span><span class="pln">token</span><span class="pun">&gt;</span></code><button class="button button--copy js-copy-button-7"><i class="fa fa-clipboard"></i></button></pre>
+<h2 id="step3">Install Ksonnet</h2>
+<p>Set the correct version and an environment variable:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export KS_VER</span><span class="pun">=</span><span class="pln">ks_0</span><span class="pun">.</span><span class="lit">13.1</span><span class="pln">_linux_amd64</span></code><button class="button button--copy js-copy-button-8"><i class="fa fa-clipboard"></i></button></pre>
+<h2 id="step4">Install the binary</h2>
+<p>Download and unpack the appropriate binary, then add it to your $PATH:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">wget </span><span class="pun">-</span><span class="pln">O </span><span class="pun">/</span><span class="pln">tmp</span><span class="pun">/</span><span class="pln">$KS_VER</span><span class="pun">.</span><span class="pln">tar</span><span class="pun">.</span><span class="pln">gz https</span><span class="pun">://</span><span class="pln">github</span><span class="pun">.</span><span class="pln">com</span><span class="pun">/</span><span class="pln">ksonnet</span><span class="pun">/</span><span class="pln">ksonnet</span><span class="pun">/</span><span class="pln">releases</span><span class="pun">/</span><span class="pln">download</span><span class="pun">/</span><span class="pln">v0</span><span class="pun">.</span><span class="lit">13.1</span><span class="pun">/</span><span class="pln">$KS_VER</span><span class="pun">.</span><span class="pln">tar</span><span class="pun">.</span><span class="pln">gz</span></code><button class="button button--copy js-copy-button-9"><i class="fa fa-clipboard"></i></button></pre>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">mkdir </span><span class="pun">-</span><span class="pln">p $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">bin
+tar </span><span class="pun">-</span><span class="pln">xvf </span><span class="pun">/</span><span class="pln">tmp</span><span class="pun">/</span><span class="pln">$KS_VER</span><span class="pun">.</span><span class="pln">tar</span><span class="pun">.</span><span class="pln">gz </span><span class="pun">-</span><span class="pln">C $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">bin</span></code><button class="button button--copy js-copy-button-10"><i class="fa fa-clipboard"></i></button></pre>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export PATH</span><span class="pun">=</span><span class="pln">$PATH</span><span class="pun">:</span><span class="pln">$</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">bin</span><span class="pun">/</span><span class="pln">$KS_VER</span></code><button class="button button--copy js-copy-button-11"><i class="fa fa-clipboard"></i></button></pre>
+<aside class="special"><p>To familiarize yourself with Ksonnet concepts, see <a href="https://github.com/ksonnet/ksonnet/blob/master/docs/concepts.md#environment" target="\_blank">this diagram</a>.</p>
+</aside>
+<h3>Retrieve the project ID</h3>
+<p>Store the project ID:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export PROJECT_ID</span><span class="pun">=</span><span class="pln">$</span><span class="pun">(</span><span class="pln">gcloud config get</span><span class="pun">-</span><span class="pln">value project</span><span class="pun">)</span></code><button class="button button--copy js-copy-button-12"><i class="fa fa-clipboard"></i></button></pre>
+<h2 id="step5">Create a service account</h2>
+<p>Create a service account with read/write access to storage buckets:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export SERVICE_ACCOUNT</span><span class="pun">=</span><span class="pln">github</span><span class="pun">-</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization
+export SERVICE_ACCOUNT_EMAIL</span><span class="pun">=</span><span class="pln">$</span><span class="pun">{</span><span class="pln">SERVICE_ACCOUNT</span><span class="pun">}</span><span class="lit">@$</span><span class="pun">{</span><span class="pln">PROJECT_ID</span><span class="pun">}.</span><span class="pln">iam</span><span class="pun">.</span><span class="pln">gserviceaccount</span><span class="pun">.</span><span class="pln">com
+gcloud iam service</span><span class="pun">-</span><span class="pln">accounts create $</span><span class="pun">{</span><span class="pln">SERVICE_ACCOUNT</span><span class="pun">}</span><span class="pln"> \
+  </span><span class="pun">--</span><span class="pln">display</span><span class="pun">-</span><span class="pln">name </span><span class="str">"GCP Service Account for use with kubeflow examples"</span><span class="pln">
+
+gcloud projects add</span><span class="pun">-</span><span class="pln">iam</span><span class="pun">-</span><span class="pln">policy</span><span class="pun">-</span><span class="pln">binding $</span><span class="pun">{</span><span class="pln">PROJECT_ID</span><span class="pun">}</span><span class="pln"> </span><span class="pun">--</span><span class="pln">member \
+  serviceAccount</span><span class="pun">:</span><span class="pln">$</span><span class="pun">{</span><span class="pln">SERVICE_ACCOUNT_EMAIL</span><span class="pun">}</span><span class="pln"> \
+  </span><span class="pun">--</span><span class="pln">role</span><span class="pun">=</span><span class="pln">roles</span><span class="pun">/</span><span class="pln">storage</span><span class="pun">.</span><span class="pln">admin</span></code><button class="button button--copy js-copy-button-13"><i class="fa fa-clipboard"></i></button></pre>
+<p>Generate a credentials file for upload to the cluster:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export KEY_FILE</span><span class="pun">=</span><span class="pln">$</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">secrets</span><span class="pun">/</span><span class="pln">$</span><span class="pun">{</span><span class="pln">SERVICE_ACCOUNT_EMAIL</span><span class="pun">}.</span><span class="pln">json
+gcloud iam service</span><span class="pun">-</span><span class="pln">accounts keys create $</span><span class="pun">{</span><span class="pln">KEY_FILE</span><span class="pun">}</span><span class="pln"> \
+  </span><span class="pun">--</span><span class="pln">iam</span><span class="pun">-</span><span class="pln">account $</span><span class="pun">{</span><span class="pln">SERVICE_ACCOUNT_EMAIL</span><span class="pun">}</span></code><button class="button button--copy js-copy-button-14"><i class="fa fa-clipboard"></i></button></pre>
+<h2 id="step6">Create a storage bucket</h2>
+<p>Create a Cloud Storage bucket for storing your trained model and issue the “mb” (make bucket) command:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export BUCKET</span><span class="pun">=</span><span class="pln">kubeflow</span><span class="pun">-</span><span class="pln">$</span><span class="pun">{</span><span class="pln">PROJECT_ID</span><span class="pun">}</span><span class="pln">
+gsutil mb </span><span class="pun">-</span><span class="pln">c regional </span><span class="pun">-</span><span class="pln">l us</span><span class="pun">-</span><span class="pln">central1 gs</span><span class="pun">://</span><span class="pln">$</span><span class="pun">{</span><span class="pln">BUCKET</span><span class="pun">}</span></code><button class="button button--copy js-copy-button-15"><i class="fa fa-clipboard"></i></button></pre>
+<h2 id="step7">Create a cluster</h2>
+<p>Create a managed Kubernetes cluster on Kubernetes Engine by running:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">gcloud container clusters create kubeflow</span><span class="pun">-</span><span class="pln">qwiklab \
+  </span><span class="pun">--</span><span class="pln">machine</span><span class="pun">-</span><span class="pln">type n1</span><span class="pun">-</span><span class="pln">standard</span><span class="pun">-</span><span class="lit">4</span><span class="pln"> \
+  </span><span class="pun">--</span><span class="pln">zone us</span><span class="pun">-</span><span class="pln">central1</span><span class="pun">-</span><span class="pln">a  \
+  </span><span class="pun">--</span><span class="pln">scopes</span><span class="pun">=</span><span class="pln">compute</span><span class="pun">-</span><span class="pln">rw</span><span class="pun">,</span><span class="pln">storage</span><span class="pun">-</span><span class="pln">rw \
+  </span><span class="pun">--</span><span class="pln">enable</span><span class="pun">-</span><span class="pln">autorepair</span></code><button class="button button--copy js-copy-button-16"><i class="fa fa-clipboard"></i></button></pre>
+<p>Cluster creation will take a few minutes to complete.</p>
+<p>Connect your local environment to the Google Kubernetes Engine (GKE) cluster:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">gcloud container clusters get</span><span class="pun">-</span><span class="pln">credentials kubeflow</span><span class="pun">-</span><span class="pln">qwiklab </span><span class="pun">--</span><span class="pln">zone us</span><span class="pun">-</span><span class="pln">central1</span><span class="pun">-</span><span class="pln">a</span></code><button class="button button--copy js-copy-button-17"><i class="fa fa-clipboard"></i></button></pre>
+<p>This configures your <code>kubectl</code> context so that you can interact with your cluster. To verify the connection, run the following command:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl cluster</span><span class="pun">-</span><span class="pln">info</span></code><button class="button button--copy js-copy-button-18"><i class="fa fa-clipboard"></i></button></pre>
+<p>Verify that this IP address matches the IP address corresponding to the Endpoint in your  <a href="https://console.cloud.google.com/kubernetes/clusters/details/us-central1-a/kubeflow-qwiklab">Google Cloud Platform Console</a> or by comparing the Kubernetes master IP is the same as the Master_IP address in the previous step.</p>
+<p>To enable the installation of Kubeflow and Seldon components, run the following to create two ClusterRoleBindings, which allows the creation of objects:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl create clusterrolebinding default</span><span class="pun">-</span><span class="pln">admin \
+  </span><span class="pun">--</span><span class="pln">clusterrole</span><span class="pun">=</span><span class="pln">cluster</span><span class="pun">-</span><span class="pln">admin \
+  </span><span class="pun">--</span><span class="pln">user</span><span class="pun">=</span><span class="pln">$</span><span class="pun">(</span><span class="pln">gcloud config get</span><span class="pun">-</span><span class="pln">value account</span><span class="pun">)</span></code><button class="button button--copy js-copy-button-19"><i class="fa fa-clipboard"></i></button></pre>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl create clusterrolebinding seldon</span><span class="pun">-</span><span class="pln">admin \
+  </span><span class="pun">--</span><span class="pln">clusterrole</span><span class="pun">=</span><span class="pln">cluster</span><span class="pun">-</span><span class="pln">admin \
+  </span><span class="pun">--</span><span class="pln">serviceaccount</span><span class="pun">=</span><span class="pln">default</span><span class="pun">:</span><span class="pln">default</span></code><button class="button button--copy js-copy-button-20"><i class="fa fa-clipboard"></i></button></pre>
+<p>Upload service account credentials:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl create secret generic user</span><span class="pun">-</span><span class="pln">gcp</span><span class="pun">-</span><span class="pln">sa \
+  </span><span class="pun">--</span><span class="pln">from</span><span class="pun">-</span><span class="pln">file</span><span class="pun">=</span><span class="pln">user</span><span class="pun">-</span><span class="pln">gcp</span><span class="pun">-</span><span class="pln">sa</span><span class="pun">.</span><span class="pln">json</span><span class="pun">=</span><span class="str">"${KEY_FILE}"</span></code><button class="button button--copy js-copy-button-21"><i class="fa fa-clipboard"></i></button></pre>
+<h2 id="step8">Install Kubeflow with Seldon</h2>
+<p>Ksonnet is a templating framework, which allows us to utilize common object definitions and customize them to our environment. We begin by referencing Kubeflow templates and apply environment-specific parameters. Once manifests have been generated specifically for our cluster, they can be applied like any other kubernetes object using <code>kubectl</code>.</p>
+<h3>Initialize a ksonnet app</h3>
+<p>Run these commands to go inside the <code>github_issue_summarization</code> directory; then create an new ksonnet app directory, fill it with boilerplate code, and retrieve component files:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">cd $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">github_issue_summarization
+ks init kubeflow
+cd kubeflow
+cp </span><span class="pun">../</span><span class="pln">ks</span><span class="pun">-</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">components</span><span class="pun">/</span><span class="pln">kubeflow</span><span class="pun">-</span><span class="pln">core</span><span class="pun">.</span><span class="pln">jsonnet components
+cp </span><span class="pun">../</span><span class="pln">ks</span><span class="pun">-</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">components</span><span class="pun">/</span><span class="pln">params</span><span class="pun">.</span><span class="pln">libsonnet components
+cp </span><span class="pun">../</span><span class="pln">ks</span><span class="pun">-</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">components</span><span class="pun">/</span><span class="pln">seldon</span><span class="pun">.</span><span class="pln">jsonnet components
+cp </span><span class="pun">../</span><span class="pln">ks</span><span class="pun">-</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">components</span><span class="pun">/</span><span class="pln">tfjob</span><span class="pun">-</span><span class="pln">v1alpha2</span><span class="pun">.*</span><span class="pln"> components
+cp </span><span class="pun">../</span><span class="pln">ks</span><span class="pun">-</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">components</span><span class="pun">/</span><span class="pln">ui</span><span class="pun">.*</span><span class="pln"> components</span></code><button class="button button--copy js-copy-button-22"><i class="fa fa-clipboard"></i></button></pre>
+<h3>Install packages and generate core components</h3>
+<p>Register the Kubeflow template repository:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export VERSION</span><span class="pun">=</span><span class="pln">v0</span><span class="pun">.</span><span class="lit">2.0</span><span class="pun">-</span><span class="pln">rc</span><span class="pun">.</span><span class="lit">1</span><span class="pln">
+ks registry add kubeflow github</span><span class="pun">.</span><span class="pln">com</span><span class="pun">/</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">kubeflow</span><span class="pun">/</span><span class="pln">tree</span><span class="pun">/</span><span class="pln">$</span><span class="pun">{</span><span class="pln">VERSION</span><span class="pun">}/</span><span class="pln">kubeflow</span></code><button class="button button--copy js-copy-button-23"><i class="fa fa-clipboard"></i></button></pre>
+<p>Install Kubeflow core and Seldon components:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">ks pkg install kubeflow</span><span class="pun">/</span><span class="pln">core@$</span><span class="pun">{</span><span class="pln">VERSION</span><span class="pun">}</span><span class="pln">
+ks pkg install kubeflow</span><span class="pun">/</span><span class="pln">tf</span><span class="pun">-</span><span class="pln">serving@$</span><span class="pun">{</span><span class="pln">VERSION</span><span class="pun">}</span><span class="pln">
+ks pkg install kubeflow</span><span class="pun">/</span><span class="pln">tf</span><span class="pun">-</span><span class="pln">job@$</span><span class="pun">{</span><span class="pln">VERSION</span><span class="pun">}</span><span class="pln">
+ks pkg install kubeflow</span><span class="pun">/</span><span class="pln">seldon@$</span><span class="pun">{</span><span class="pln">VERSION</span><span class="pun">}</span></code><button class="button button--copy js-copy-button-24"><i class="fa fa-clipboard"></i></button></pre>
+<aside class="special"><p><strong>Note: </strong>If you run into rate-limit errors, be sure your GITHUB_TOKEN environment variable is set properly. See the <strong>Set Your GitHub Token</strong> section above for more details.</p>
+</aside>
+<h2 id="step9">Create the environment</h2>
+<p>Define an environment that references our specific cluster:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">ks env add gke
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke kubeflow</span><span class="pun">-</span><span class="pln">core \
+  cloud </span><span class="str">"gke"</span><span class="pln">
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke kubeflow</span><span class="pun">-</span><span class="pln">core \
+  tfAmbassadorServiceType </span><span class="str">"LoadBalancer"</span></code><button class="button button--copy js-copy-button-25"><i class="fa fa-clipboard"></i></button></pre>
+<p>Apply the generated manifests to the cluster to create the Kubeflow and Seldon components:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">ks apply gke </span><span class="pun">-</span><span class="pln">c kubeflow</span><span class="pun">-</span><span class="pln">core </span><span class="pun">-</span><span class="pln">c seldon</span></code><button class="button button--copy js-copy-button-26"><i class="fa fa-clipboard"></i></button></pre>
+<p>Your cluster now contains a Kubeflow installation with Seldon with the following components:</p>
+<ul>
+<li>Reverse HTTP proxy (Ambassador)</li>
+<li>Central dashboard</li>
+<li>Jupyterhub</li>
+<li>TF job dashboard</li>
+<li>TF job operator</li>
+<li>Seldon cluster manager</li>
+<li>Seldon cache</li>
+</ul>
+<p>You can view the components by running:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl get pods</span></code><button class="button button--copy js-copy-button-27"><i class="fa fa-clipboard"></i></button></pre>
+<aside class="special"><p><strong>Note: </strong>Image pulls can take a while. You can expect pods to remain in ContainerCreating status for a few minutes.</p>
+</aside>
+<p>You should see output similar to this:</p>
+<p><img alt="b955db44cfb34944.png" src="./Kubeflow_ End to End _ Qwiklabs_files/BOBMX33f2NPERd2vQyxwE+p+9hpZ8N3+Xkj07qtoAbg="></p>
+<h2 id="step10">Train a model</h2>
+<p>In this section, you will create a component that trains a model.</p>
+<p>Set the component parameters:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">cd $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">github_issue_summarization</span><span class="pun">/</span><span class="pln">kubeflow
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke tfjob</span><span class="pun">-</span><span class="pln">v1alpha2 image </span><span class="str">"gcr.io/kubeflow-examples/tf-job-issue-summarization:v20180629-v0.1-2-g98ed4b4-dirty-182929"</span><span class="pln">
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke tfjob</span><span class="pun">-</span><span class="pln">v1alpha2 output_model_gcs_bucket </span><span class="str">"${BUCKET}"</span></code><button class="button button--copy js-copy-button-28"><i class="fa fa-clipboard"></i></button></pre>
+<p>The training component <code>tfjob-v1alpha2</code> is now configured to use a pre-built image. If you would prefer to generate your own instead, continue with the Optional create the training image step.</p>
+<aside class="special"><h2 id="step11">(Optional) Create the training image</h2>
+<p>Image creation can take 5-10 minutes.</p>
+<p>In the <code>github_issue_summarization</code> directory, navigate to the folder containing the training code (<code>notebooks</code>). From there, issue a <code>make</code> command that builds the image and stores it in Google Container Registry (GCR). This places it in a location accessible from inside the cluster.</p>
+<p><code>cd ${HOME}/examples/github_issue_summarization/notebooks</code></p>
+<p><code>make PROJECT=${PROJECT_ID} push</code></p>
+<p>Once the image has been built and stored in GCR, update the component parameter with a link that points to the custom image:</p>
+<p><code>export TAG=$(gcloud container images list-tags \</code></p>
+<p><code>  gcr.io/${PROJECT_ID}/tf-job-issue-summarization \</code></p>
+<p><code>  --limit=1 \</code></p>
+<p><code>  --format='get(tags)')</code></p>
+<p><code>cd ${HOME}/examples/github_issue_summarization/kubeflow</code></p>
+<p><code>ks param set --env gke tfjob-v1alpha2 image "gcr.io/${PROJECT_ID}/tf-job-issue-summarization:${TAG}"</code></p>
+</aside>
+<h3>Launch training</h3>
+<p>Apply the component manifests to the cluster:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">ks apply gke </span><span class="pun">-</span><span class="pln">c tfjob</span><span class="pun">-</span><span class="pln">v1alpha2</span></code><button class="button button--copy js-copy-button-29"><i class="fa fa-clipboard"></i></button></pre>
+<h3>View the running job</h3>
+<p>View the resulting pods:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl get pods</span></code><button class="button button--copy js-copy-button-30"><i class="fa fa-clipboard"></i></button></pre>
+<p>Your cluster state should look similar to this:</p>
+<p><img alt="8ef9030596923b35.png" src="./Kubeflow_ End to End _ Qwiklabs_files/EZ+K359DwA49UEzqOrpSHuLssA9417LHtaTSLcqxbXI="></p>
+<p>It can take a few minutes to pull the image and start the container.</p>
+<p>Once the new pod is running, tail the logs:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl logs </span><span class="pun">-</span><span class="pln">f \
+  $</span><span class="pun">(</span><span class="pln">kubectl get pods </span><span class="pun">-</span><span class="pln">ltf_job_key</span><span class="pun">=</span><span class="pln">tfjob</span><span class="pun">-</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization </span><span class="pun">-</span><span class="pln">o</span><span class="pun">=</span><span class="pln">jsonpath</span><span class="pun">=</span><span class="str">'{.items[0].metadata.name}'</span><span class="pun">)</span></code><button class="button button--copy js-copy-button-31"><i class="fa fa-clipboard"></i></button></pre>
+<p>Inside the pod, you will see the download of source data (<code>github-issues.zip</code>) before training begins. Continue tailing the logs until the pod exits on its own and you find yourself back at the command prompt. When you see the command prompt, continue with the next step.</p>
+<p><img alt="62c11bb1d8773d26.png" src="./Kubeflow_ End to End _ Qwiklabs_files/XQtcI+WQgUKsyPqhfYqENETgeOoJTMRjujDpubWF6RU="></p>
+<p>To verify that training completed successfully, check to make sure all three model files were uploaded to your GCS bucket:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">gsutil ls gs</span><span class="pun">://</span><span class="pln">$</span><span class="pun">{</span><span class="pln">BUCKET</span><span class="pun">}/</span><span class="pln">github</span><span class="pun">-</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">data</span></code><button class="button button--copy js-copy-button-32"><i class="fa fa-clipboard"></i></button></pre>
+<p>You should see something like this:</p>
+<p><img alt="8b3c95b353a11b6b.png" src="./Kubeflow_ End to End _ Qwiklabs_files/BB0g9EiY5fVVOMqKW08y+eShlkvHWWwagDbTx50XZ10="></p>
+<h2 id="step12">Serve the trained model</h2>
+<p>In this section, you will create a component that serves a trained model.</p>
+<p>Set component parameters:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export SERVING_IMAGE</span><span class="pun">=</span><span class="pln">gcr</span><span class="pun">.</span><span class="pln">io</span><span class="pun">/</span><span class="pln">kubeflow</span><span class="pun">-</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">model</span><span class="pun">:</span><span class="pln">v20180629</span><span class="pun">-</span><span class="pln">v0</span><span class="pun">.</span><span class="lit">1</span><span class="pun">-</span><span class="lit">2</span><span class="pun">-</span><span class="pln">g98ed4b4</span><span class="pun">-</span><span class="pln">dirty</span><span class="pun">-</span><span class="lit">182929</span></code><button class="button button--copy js-copy-button-33"><i class="fa fa-clipboard"></i></button></pre>
+<h3>Create the serving image</h3>
+<p>The serving component is configured to run a pre-built image, to save you some time. If you would prefer to serve the model you created in the previous step, you can generate your own by continuing with <em>Optional image creation</em> step. Otherwise, continue with the <em>Create the serving component</em> step.</p>
+<aside class="special"><h3><strong>(Optional) image creation</strong></h3>
+<h4><strong>Download the trained model files</strong></h4>
+<p>Retrieve the trained model files that were generated in the previous step:</p>
+<p><code>cd ${HOME}/examples/github_issue_summarization/notebooks</code><code>gsutil cp gs://${BUCKET}/github-issue-summarization-data/* .</code></p>
+<h4><strong>Generate image build files</strong></h4>
+<p>Using a Seldon wrapper, generate files for building a serving image. This command creates a build directory and image creation script:</p>
+<p><code>docker run -v $(pwd):/my_model seldonio/core-python-wrapper:0.7 \</code></p>
+<p><code>  /my_model IssueSummarization 0.1 gcr.io \</code></p>
+<p><code>  --base-image=python:3.6 \</code></p>
+<p><code>  --image-name=${PROJECT_ID}/issue-summarization-model</code></p>
+<h4><strong>Generate a serving image</strong></h4>
+<p>Using the files created by the wrapper, generate a serving image and store it in GCR:</p>
+<p><code>cd ${HOME}/examples/github_issue_summarization/notebooks/build</code></p>
+<p><code>./build_image.sh</code></p>
+<p><code>gcloud docker -- push gcr.io/${PROJECT_ID}/issue-summarization-model:0.1</code></p>
+<p><code>export SERVING_IMAGE=gcr.io/${PROJECT_ID}/issue-summarization-model:0.1</code></p>
+</aside>
+<h3>Create the serving component</h3>
+<p>This serving component is configured to run a pre-built image. Using a Seldon ksonnet template, generate the serving component.</p>
+<p>Navigate back to the ksonnet app directory and issue the following command:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">cd $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">github_issue_summarization</span><span class="pun">/</span><span class="pln">kubeflow
+ks generate seldon</span><span class="pun">-</span><span class="pln">serve</span><span class="pun">-</span><span class="pln">simple issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">model \
+  </span><span class="pun">--</span><span class="pln">name</span><span class="pun">=</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization \
+  </span><span class="pun">--</span><span class="pln">image</span><span class="pun">=</span><span class="pln">$</span><span class="pun">{</span><span class="pln">SERVING_IMAGE</span><span class="pun">}</span><span class="pln"> \
+  </span><span class="pun">--</span><span class="pln">replicas</span><span class="pun">=</span><span class="lit">2</span></code><button class="button button--copy js-copy-button-34"><i class="fa fa-clipboard"></i></button></pre>
+<h3>Launch serving</h3>
+<p>Apply the component manifests to the cluster:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">ks apply gke </span><span class="pun">-</span><span class="pln">c issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">model</span></code><button class="button button--copy js-copy-button-35"><i class="fa fa-clipboard"></i></button></pre>
+<h3>View the running pods</h3>
+<p>You will see several new pods appear:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl get pods</span></code><button class="button button--copy js-copy-button-36"><i class="fa fa-clipboard"></i></button></pre>
+<p>Your cluster state should look similar to this:</p>
+<p><img alt="ad0c22eb9fa07f31.png" src="./Kubeflow_ End to End _ Qwiklabs_files/A0G_3m3XFp+bU8LWIXPiRZuAM4dZywo9u90ntnF6PPo="></p>
+<p>Wait a minute or two and re-run the previous command. Once the pods are running, tail the logs for one of the serving containers to verify that it is running on port 9000:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl logs \
+  $</span><span class="pun">(</span><span class="pln">kubectl get pods \
+    </span><span class="pun">-</span><span class="pln">lseldon</span><span class="pun">-</span><span class="pln">app</span><span class="pun">=</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization \
+    </span><span class="pun">-</span><span class="pln">o</span><span class="pun">=</span><span class="pln">jsonpath</span><span class="pun">=</span><span class="str">'{.items[0].metadata.name}'</span><span class="pun">)</span><span class="pln"> \
+  issue</span><span class="pun">-</span><span class="pln">summarization</span></code><button class="button button--copy js-copy-button-37"><i class="fa fa-clipboard"></i></button></pre>
+<p>Press <strong>Ctrl</strong> + <strong>C</strong> to return to the command line.</p>
+<h2 id="step13">Add a UI</h2>
+<h3>Set parameter values</h3>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">cd $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">github_issue_summarization</span><span class="pun">/</span><span class="pln">kubeflow
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke ui image </span><span class="str">"gcr.io/kubeflow-examples/issue-summarization-ui:v20180629-v0.1-2-g98ed4b4-dirty-182929"</span><span class="pln">
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke ui githubToken $</span><span class="pun">{</span><span class="pln">GITHUB_TOKEN</span><span class="pun">}</span><span class="pln">
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke ui modelUrl </span><span class="str">"http://issue-summarization.default.svc.cluster.local:8000/api/v0.1/predictions"</span><span class="pln">
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke ui serviceType </span><span class="str">"LoadBalancer"</span></code><button class="button button--copy js-copy-button-38"><i class="fa fa-clipboard"></i></button></pre>
+<h3>(Optional) Create the UI image</h3>
+<p>The UI component is now configured to use a pre-built image. If you would prefer to generate your own instead, continue with this step.</p>
+<aside class="special"><p><strong>Note: </strong>Image creation can take 5-10 minutes. This step is optional. Alternatively, skip directly to the <strong>Launch the UI</strong> section below.</p>
+</aside>
+<p>Switch to the docker directory and build the image for the UI:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">cd $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">github_issue_summarization</span><span class="pun">/</span><span class="pln">docker
+docker build </span><span class="pun">-</span><span class="pln">t gcr</span><span class="pun">.</span><span class="pln">io</span><span class="pun">/</span><span class="pln">$</span><span class="pun">{</span><span class="pln">PROJECT_ID</span><span class="pun">}/</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">ui</span><span class="pun">:</span><span class="pln">latest </span><span class="pun">.</span></code><button class="button button--copy js-copy-button-39"><i class="fa fa-clipboard"></i></button></pre>
+<p>After it has been successfully built, store it in GCR:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">gcloud docker </span><span class="pun">--</span><span class="pln"> push gcr</span><span class="pun">.</span><span class="pln">io</span><span class="pun">/</span><span class="pln">$</span><span class="pun">{</span><span class="pln">PROJECT_ID</span><span class="pun">}/</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">ui</span><span class="pun">:</span><span class="pln">latest</span></code><button class="button button--copy js-copy-button-40"><i class="fa fa-clipboard"></i></button></pre>
+<p>Update the component parameter with a link that points to the custom image:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">cd $</span><span class="pun">{</span><span class="pln">HOME</span><span class="pun">}/</span><span class="pln">examples</span><span class="pun">/</span><span class="pln">github_issue_summarization</span><span class="pun">/</span><span class="pln">kubeflow
+ks param </span><span class="kwd">set</span><span class="pln"> </span><span class="pun">--</span><span class="pln">env gke ui image gcr</span><span class="pun">.</span><span class="pln">io</span><span class="pun">/</span><span class="pln">$</span><span class="pun">{</span><span class="pln">PROJECT_ID</span><span class="pun">}/</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">ui</span><span class="pun">:</span><span class="pln">latest</span></code><button class="button button--copy js-copy-button-41"><i class="fa fa-clipboard"></i></button></pre>
+<h3>Launch the UI</h3>
+<p>Apply the component manifests to the cluster:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">ks apply gke </span><span class="pun">-</span><span class="pln">c ui</span></code><button class="button button--copy js-copy-button-42"><i class="fa fa-clipboard"></i></button></pre>
+<p>You should see an additional pod, it's status will be ContainerCreating:</p>
+<p><img alt="36ee1c18b4feb688.png" src="./Kubeflow_ End to End _ Qwiklabs_files/_ki9k1St0cZw6chbEDsTkXtSBhAKYxNHsoCh8VRHZTs="></p>
+<h3>View the UI</h3>
+<p>To view the UI, get the external IP address:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl get svc issue</span><span class="pun">-</span><span class="pln">summarization</span><span class="pun">-</span><span class="pln">ui</span></code><button class="button button--copy js-copy-button-43"><i class="fa fa-clipboard"></i></button></pre>
+<p>Wait until the external IP address has been populated. Re-run the command until it appears. Copy the External-IP address.</p>
+<p><img alt="837bb38a0b5bd625.png" src="./Kubeflow_ End to End _ Qwiklabs_files/JhTAwS1J6ky+9k2HUk_8JEE_WIUST09YLZH+7CoQXTw="></p>
+<p>In a browser, paste the <code>EXTERNAL-IP</code> to view the results. You should see something like this:</p>
+<p><img alt="f783cfbd99ecbc94.png" src="./Kubeflow_ End to End _ Qwiklabs_files/BjGQfnivUeyNi2OiBTcYqmGxUcQ8IxLgHdVvYELv0wg="></p>
+<p>Click the <strong>Populate Random Issue</strong> button to fill in the large text box with a random issue summary. Then click the <strong>Generate Title</strong> button to view the machine generated title produced by your trained model. Click the button a couple of times to give yourself some more data to look at in the next step.</p>
+<h2 id="step14">View serving container logs</h2>
+<p>In Cloud Shell, tail the logs of one of the serving containers to verify that it is receiving a request from the UI and providing a prediction in response:</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">kubectl logs </span><span class="pun">-</span><span class="pln">f \
+  $</span><span class="pun">(</span><span class="pln">kubectl get pods \
+    </span><span class="pun">-</span><span class="pln">lseldon</span><span class="pun">-</span><span class="pln">app</span><span class="pun">=</span><span class="pln">issue</span><span class="pun">-</span><span class="pln">summarization \
+    </span><span class="pun">-</span><span class="pln">o</span><span class="pun">=</span><span class="pln">jsonpath</span><span class="pun">=</span><span class="str">'{.items[0].metadata.name}'</span><span class="pun">)</span><span class="pln"> \
+  issue</span><span class="pun">-</span><span class="pln">summarization</span></code><button class="button button--copy js-copy-button-44"><i class="fa fa-clipboard"></i></button></pre>
+<p>Back in the UI, press the <strong>Generate Title</strong> button a few times to view the POST request in Cloud Shell. Since there are two serving containers, you might need to try a few times before you see the log entry.</p>
+<p>Press <strong>Ctrl+C</strong> to return to the command prompt.</p>
+<p><img alt="80e4cb7771ebb9f5.png" src="./Kubeflow_ End to End _ Qwiklabs_files/RsY0V3geBARx_Yi9sJKYc3aVC9za9K8XJC5KstBPxzI="></p>
+<h2 id="step15">Clean up</h2>
+<h3>Remove GitHub token</h3>
+<p>Navigate to  <a href="https://github.com/settings/tokens">https://github.com/settings/tokens</a> and remove the generated token.</p>
+<h2 id="step16">End your lab</h2>
+<p>When you have completed your lab, click <strong>End Lab</strong>. Qwiklabs removes the resources you’ve used and cleans the account for you.</p>
+<p>You will be given an opportunity to rate the lab experience. Select the applicable number of stars, type a comment, and then click <strong>Submit</strong>.</p>
+<p>The number of stars indicates the following:</p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+<p>You can close the dialog box if you don't want to provide feedback.</p>
+<p>For feedback, suggestions, or corrections, please use the <strong>Support</strong> tab.</p>
+
+<p>Manual Last Updated: January 28, 2020</p>
+<p>Lab Last Tested: January 28, 2020</p>
+<p>©2020 Google LLC All rights reserved. Google and the Google logo are trademarks of Google LLC. All other company and product names may be trademarks of the respective companies with which they are associated.</p>
+
+
+
+</div>
+<div class="js-lab-content-outline lab-content__outline">
+<a href="https://googlecoursera.qwiklabs.com/focuses/35226#step1" class="">Introduction</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step2">Setup the environment</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step3">Install Ksonnet</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step4">Install the binary</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step5">Create a service account</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step6">Create a storage bucket</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step7">Create a cluster</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step8">Install Kubeflow with Seldon</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step9">Create the environment</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step10">Train a model</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step11">(Optional) Create the training image</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step12">Serve the trained model</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step13">Add a UI</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step14">View serving container logs</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step15">Clean up</a><a href="https://googlecoursera.qwiklabs.com/focuses/35226#step16">End your lab</a>
+</div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+<div class="lab-introduction js-lab-introduction is-hidden">
+<div class="lab-introduction__inner">
+<h1 class="headline-1">Welcome to Your First Lab!</h1>
+<ql-icon-button class="js-skip-button">close</ql-icon-button>
+<div class="lab-introduction__video">
+<iframe allow="autoplay; encrypted-media" allowfullscreen="" frameborder="0" id="lab-introduction" src="./Kubeflow_ End to End _ Qwiklabs_files/yF7EDXKTmoQ.html"></iframe>
+</div>
+<a class="js-skip-button button button--outline">Skip this video</a>
+</div>
+</div>
+
+
+
+</div>
+</main>
+<div class="modal fade" id="lab-details-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<div class="modal-body">
+<p class="l-mbm">
+In this hands-on lab, you will install Kubeflow on an empty Kubernetes Engine cluster and use it to train and serve a sequence-to-sequence model using TensorFlow, Keras, and SeldonIO.
+</p>
+<p class="small-label l-mbs">
+<strong>
+Duration:
+</strong>
+0m setup
+·
+120m access
+·
+120m completion
+</p>
+<p class="small-label l-mbs">
+<span><strong>Levels: </strong>introductory</span>
+</p>
+<p class="small-label">
+<strong>
+Permalink:
+</strong>
+<a href="https://googlecoursera.qwiklabs.com/catalog_lab/1960">https://googlecoursera.qwiklabs.com/catalog_lab/1960</a>
+</p>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Got It
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Kubeflow_ End to End _ Qwiklabs_files/saved_resource(1).html"></iframe>
+</div>
+<div class="modal fade" id="lab-review-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="https://googlecoursera.qwiklabs.com/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="✓"><div class="modal-body">
+<p class="label">
+How satisfied are you with this lab?*
+</p>
+<div class="rateit js-rateit" data-rateit-max="5" data-rateit-min="0" data-rateit-resetable="false" data-rateit-step="1" data-rateit-value="0"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 0px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+<div class="l-mtm">
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="1018107" name="lab_review[user_id]" id="lab_review_user_id"></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="4484" name="lab_review[classroom_id]" id="lab_review_classroom_id"></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="1960" name="lab_review[lab_id]" id="lab_review_lab_id"></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="35226" name="lab_review[focus_id]" id="lab_review_focus_id"></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating"></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Comment</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment"></textarea></div></div>
+</div>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Cancel
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<input type="submit" name="commit" value="Submit" disabled="disabled" class="btn mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="submit" data-disabled="false" data-disable-with="Submit" data-upgraded=",MaterialButton,MaterialRipple"><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></input>
+</div>
+</form>
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Kubeflow_ End to End _ Qwiklabs_files/saved_resource(2).html"></iframe>
+</div>
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    initLabContent( );
+  ql.labOutline.links.init();
+  ql.labOutline.layout.init();
+  initLabReviewModal();
+  ql.labAssessment.init();
+  ql.labIntroduction.init( true );
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?\n","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.\n","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.initHeader();
+  ql.navigation.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+<style>
+  .mdl-layout__container {
+    position: static
+  }
+</style>
+
+
+<iframe data-product="web_widget" title="No content" tabindex="-1" aria-hidden="true" src="./Kubeflow_ End to End _ Qwiklabs_files/saved_resource(3).html" style="width: 0px; height: 0px; border: 0px; position: absolute; top: -9999px;"></iframe><div><iframe title="Opens a widget where you can chat to one of our agents" id="launcher" tabindex="0" class="zEWidget-launcher zEWidget-launcher--active" style="border: none; background: transparent; z-index: 999998; transform: translateZ(0px); position: fixed; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; opacity: 1; height: 50px; max-height: 551px; min-height: 50px; margin: 10px 20px; right: 0px; bottom: 0px; width: 112px;width: 112px;" src="./Kubeflow_ End to End _ Qwiklabs_files/saved_resource(4).html"></iframe></div><div><iframe title="Find more information here" id="webWidget" tabindex="-1" class="zEWidget-webWidget " style="border: none; background: transparent; z-index: 999999; transform: translateZ(0px); position: fixed; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; opacity: 0; width: 357px; height: 100%; max-height: 565px; min-height: 150px; margin-left: 8px; margin-right: 8px; top: -9999px; visibility: hidden;" src="./Kubeflow_ End to End _ Qwiklabs_files/saved_resource(5).html"></iframe></div></body></html>

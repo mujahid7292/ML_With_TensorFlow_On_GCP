@@ -1,0 +1,6 @@
+absl-py==0.7
+pyarrow==0.15.1
+absl-py==0.7
+tensorflow
+tensorflow_transform
+apache-beam[gcp]==2.20.0

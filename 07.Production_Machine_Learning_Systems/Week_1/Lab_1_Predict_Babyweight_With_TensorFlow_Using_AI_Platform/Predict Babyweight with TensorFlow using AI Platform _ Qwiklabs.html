@@ -1,0 +1,616 @@
+<!DOCTYPE html>
+<!-- saved from url=(0049)https://googlecoursera.qwiklabs.com/focuses/52013 -->
+<html lang="en" class="mdl-js"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8"><style>body {transition: opacity ease-in 0.2s; } 
+body[unresolved] {opacity: 0; display: block; overflow: hidden; position: relative; } 
+</style>
+<meta content="[]" name="active-experiments">
+<meta content="{&quot;userId&quot;:1018107}" name="help-api-product-data">
+<meta name="csrf-param" content="authenticity_token">
+<meta name="csrf-token" content="p4DP56NZnqMgHn2HXy4kQVV+VtGlrRnDdmZ6yzP35cLlD5vIxOclyRVPFDS0Ezoet4gQBbUoYEYkmT0ndYPyHg==">
+<title>Predict Babyweight with TensorFlow using AI Platform | Qwiklabs</title>
+<meta content="width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0" name="viewport">
+<meta content="In this lab you train, evaluate, and deploy a machine learning model to predict a baby’s weight.  You then send requests to the model to make online predictions.  This lab is part of a series of labs on processing scientific data." name="description">
+<meta content="Qwiklabs" name="author">
+<meta content="1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0" name="google-site-verification">
+<meta content="Predict Babyweight with TensorFlow using AI Platform | Qwiklabs" property="og:title">
+<meta content="website" property="og:type">
+<meta content="/favicon-144.png" property="og:image">
+<meta content="Qwiklabs" property="og:site_name">
+<meta content="In this lab you train, evaluate, and deploy a machine learning model to predict a baby’s weight.  You then send requests to the model to make online predictions.  This lab is part of a series of labs on processing scientific data." property="og:description">
+<meta content="/qwiklabs_logo_900x887.png" property="og:logo" size="900x887">
+<meta content="/qwiklabs_logo_994x187.png" property="og:logo" size="994x187">
+<meta content="#3681E4" property="msapplication-TileColor">
+<meta content="/favicon-144.png" property="msapplication-TileImage">
+<link href="https://googlecoursera.qwiklabs.com/favicon-32.png" rel="shortcut icon">
+<link color="#3681E4" href="https://googlecoursera.qwiklabs.com/favicon-svg.svg" rel="mask-icon">
+<link href="https://googlecoursera.qwiklabs.com/favicon-180.png" rel="apple-touch-icon-precomposed">
+<link rel="stylesheet" media="screen" href="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/css">
+
+
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type="text/javascript" async="" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/js"></script><script type="text/javascript" async="" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/analytics.js.download"></script><script type="text/javascript" async="" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/analytics.min.js.download"></script><script type="text/javascript" id="www-widgetapi-script" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/www-widgetapi.js.download" async=""></script><script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Saifullah al","lastname":"Mujahid","fullname":"Saifullah al Mujahid","company":"Login with Google","email":"mujahid7292@gmail.com","origin":"google-run, direct, nEHJKyBzts1wgcYE7A3w","subscriptions":0,"id":"594ecfdd6abffec37cc71dd7002ec821","qlCreatedAt":"2018-08-09 10:26:13 UTC","optIn":true};gon.segment="j4Im8pqIko0Lxq4wVVZWMPMM0EroHUvb";gon.deployment="googlecoursera-run";
+//]]>
+</script>
+<script type="application/ld+json">
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id="ze-snippet" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/snippet.js.download"></script>
+
+
+
+<link rel="stylesheet" media="all" href="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/application-4c3d1e8bc7757ea.css">
+<script>
+  EVENT_SOURCE_BASE_URL = "https://googlecoursera-run.qwiklabs.com/nchan-sub?id=";
+</script>
+<script src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/webcomponents-loader.j.download"></script><script src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/webcomponents-hi.js.download"></script>
+<script src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/hallofmirrors-1a4abec5.download"></script><script async="" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/lazy.min.js.download"></script>
+<script src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/iframe_api"></script>
+<script src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/vendor-45d462772c30000.download"></script>
+<script src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/application-7c67c1d428.download"></script>
+</head>
+<body class="focuses focuses-show lab-show l-full no-nav">
+<div class="header-container">
+<div class="header">
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect header__button header__button--nav header__nav-panel-button js-nav-toggle" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">menu</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header__title">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--nav" href="https://www.coursera.org/" data-upgraded=",MaterialButton,MaterialRipple"><ql-icon>arrow_back</ql-icon><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+
+<h1 class="headline-5">
+Predict Babyweight with TensorFlow using AI Platform
+</h1>
+</div>
+<div class="header__actions">
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--action header__button--search js-header-search-bar-button" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">search</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" id="toggle-lab-control-panel" href="javascript:;" data-upgraded=",MaterialButton,MaterialRipple" tabindex="0"><i class="material-icons">description</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a><div class="mdl-tooltip js-tooltip" data-mdl-for="toggle-lab-control-panel" data-upgraded=",MaterialTooltip">
+Toggle Lab Panel
+</div>
+
+<ql-help context="lab" productdata="{&quot;userId&quot;:1018107}" data-analytics-action="opened_help" data-analytics-label="lab"></ql-help>
+<a class="header-my-account-button mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-my-account-button" data-upgraded=",MaterialButton,MaterialRipple">
+<img class="avatar " alt="avatar image" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/446d5a9572a0ed0a6dd56cb9e8.jpeg">
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<div class="header-my-account-menu js-my-account-menu">
+<div class="card elevation-2 no-padding">
+<div class="my-account-menu__top">
+<img class="avatar " alt="avatar image" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/446d5a9572a0ed0a6dd56cb9e8.jpeg">
+<div class="my-account-menu__info">
+<h4 class="subtitle-headline-1">
+Saifullah al Mujahid
+</h4>
+<p class="body-2 text--gray">
+<span>mujahid7292@gmail.com</span>
+</p>
+<a class="button" href="https://googlecoursera.qwiklabs.com/my_account/profile">My Account</a>
+</div>
+</div>
+<div class="my-account-menu__bottom">
+<a class="text--green subtitle-headline-2" href="https://googlecoursera.qwiklabs.com/my_account/credits">5 Credits
+</a><a data-analytics-action="clicked_sign_out" class="button button--hairline" rel="nofollow" data-method="delete" href="https://googlecoursera.qwiklabs.com/users/sign_out">Sign Out</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class="header__search-bar js-header-search-bar">
+<form id="catalog-search-mobile" onsubmit="ql.catalogSearchFilter(); return false;" action="https://googlecoursera.qwiklabs.com/searches/elasticsearch" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="✓"><input type="hidden" name="authenticity_token" value="p4DP56NZnqMgHn2HXy4kQVV+VtGlrRnDdmZ6yzP35cLlD5vIxOclyRVPFDS0Ezoet4gQBbUoYEYkmT0ndYPyHg==">
+<input type="text" name="keywords" id="keywords" placeholder="Search" maxlength="255" aria-label="catalog search bar">
+</form>
+
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button" data-upgraded=",MaterialButton,MaterialRipple">
+<i class="material-icons">close</i>
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+</div>
+
+<nav class="nav-bar">
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/"><ql-icon class="nav-bar__item__icon">
+home
+</ql-icon>
+<span class="nav-bar__item__label">
+Home
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/catalog"><ql-icon class="nav-bar__item__icon">
+school
+</ql-icon>
+<span class="nav-bar__item__label">
+Catalog
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_learning"><ql-icon class="nav-bar__item__icon">
+event_note
+</ql-icon>
+<span class="nav-bar__item__label">
+My Learning
+</span>
+</a>
+</nav>
+
+<nav class="nav-panel js-nav-panel">
+<div class="nav-panel__logo">
+<div class="logo logo--blue"></div>
+</div>
+<a title="Home" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/"><ql-icon class="nav-panel__item__icon">
+home
+</ql-icon>
+<div class="nav-panel__item__label">
+Home
+</div>
+</a>
+<a title="Catalog" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/catalog"><ql-icon class="nav-panel__item__icon">
+school
+</ql-icon>
+<div class="nav-panel__item__label">
+Catalog
+</div>
+</a>
+<a title="My Learning" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_learning"><ql-icon class="nav-panel__item__icon">
+event_note
+</ql-icon>
+<div class="nav-panel__item__label">
+My Learning
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a title="Profile" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/profile"><ql-icon class="nav-panel__item__icon">
+account_circle
+</ql-icon>
+<div class="nav-panel__item__label">
+Profile
+</div>
+</a>
+<a title="Credits &amp; Subscriptions" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/credits"><ql-icon class="nav-panel__item__icon">
+money
+</ql-icon>
+<div class="nav-panel__item__label">
+Credits &amp; Subscriptions
+</div>
+</a>
+<a title="Security" tabindex="-1" class="nav-panel__item js-navigation-button" href="https://googlecoursera.qwiklabs.com/my_account/security"><ql-icon class="nav-panel__item__icon">
+security
+</ql-icon>
+<div class="nav-panel__item__label">
+Security
+</div>
+</a>
+<div class="nav-panel__spacer"></div>
+<a class="nav-panel__item" tabindex="-1" href="https://googlecoursera.qwiklabs.com/focuses/52013#"><ql-help>
+<div class="nav-panel__help-item">
+<ql-icon class="nav-panel__item__icon">help</ql-icon>
+<div class="nav-panel__item__label">Help</div>
+</div>
+</ql-help>
+</a><div class="nav-panel__small-links">
+<a tabindex="-1" href="https://googlecoursera.qwiklabs.com/privacy_policy">Privacy</a>
+<a tabindex="-1" href="https://googlecoursera.qwiklabs.com/terms_of_service">Terms</a>
+</div>
+</nav>
+<div class="nav-panel__overlay js-nav-toggle"></div>
+
+<main class="js-main">
+<span class="hidden" id="flash-sibling-before"></span>
+
+<div class="l-main-wrapper" id="main-wrapper">
+
+
+
+
+
+
+
+<div class="js-lab-state" data-analytics-payload="{&quot;label&quot;:&quot;Predict Babyweight with TensorFlow using AI Platform&quot;,&quot;lab_name&quot;:&quot;Predict Babyweight with TensorFlow using AI Platform&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;googlecoursera-run&quot;}" data-focus-id="52013" data-lab-billing-limit="0.0" data-lab-duration="5400" data-parent="classroom"></div>
+<ql-lab-control-panel class="js-lab-control-panel l-lab-control-panel" connectiondetails="[]" connectionfiles="[]" labcontrolbutton="{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}" labtimer="{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:5400}" studentresources="[]"></ql-lab-control-panel>
+<div class="l-lab-main-body">
+<div class="js-lab-content lab-content">
+<div class="alert alert--fake js-alert">
+<p class="alert__message js-alert-message"></p>
+<a class="alert__close js-alert-close">
+<i class="fa fa-times"></i>
+</a>
+<iframe class="l-ie-iframe-fix" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource.html"></iframe>
+</div>
+<div class="lab-content__markdown-wrapper">
+<div class="lab-preamble">
+<h1 class="lab-preamble__title">
+Predict Babyweight with TensorFlow using AI Platform
+</h1>
+<div class="lab-preamble__details subtitle-headline-1">
+<span>1 hour 30 minutes</span>
+<span>1 Credit</span>
+<div class="lab__rating">
+<a href="https://googlecoursera.qwiklabs.com/focuses/52013/reviews?parent=catalog"><div class="rateit" data-rateit-readonly="true" data-rateit-value="3.9401"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 63.0416px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+
+</a><a data-target="#lab-review-modal" data-toggle="modal">
+Rate Lab
+</a>
+</div>
+</div>
+</div>
+
+<div class="lab-content__inner-wrapper">
+<div class="js-markdown-instructions lab-content__markdown markdown-lab-instructions" id="markdown-lab-instructions">
+
+
+
+<h2 id="step1">Overview</h2>
+<p>In this lab you train, evaluate, and deploy a machine learning model to predict a baby's weight. You then send requests to the model to make online predictions.</p>
+<h3><strong>What you learn</strong></h3>
+<p>In this lab, you:</p>
+<ul>
+<li>
+<p>Launch AI Platform notebook</p>
+</li>
+<li>
+<p>Carry out local training</p>
+</li>
+<li>
+<p>Carry out distributed training</p>
+</li>
+<li>
+<p>Deploy the ML model as a web service</p>
+</li>
+<li>
+<p>Make predictions with the model</p>
+</li>
+</ul>
+<h2 id="step2">Setup</h2>
+<h4>Before you click the Start Lab button</h4>
+<p>Read these instructions. Labs are timed and you cannot pause them. The timer, which starts when you click Start Lab, shows how long Cloud resources will be made available to you.</p>
+<p>This Qwiklabs hands-on lab lets you do the lab activities yourself in a real cloud environment, not in a simulation or demo environment. It does so by giving you new, temporary credentials that you use to sign in and access the Google Cloud Platform for the duration of the lab.</p>
+<h4>What you need</h4>
+<p>To complete this lab, you need:</p>
+<ul>
+<li>Access to a standard internet browser (Chrome browser recommended).</li>
+<li>Time to complete the lab.</li>
+</ul>
+<p><strong><em>Note:</em></strong> If you already have your own personal GCP account or project, do not use it for this lab.</p>
+
+<h4>How to start your lab and sign in to the Console</h4>
+<ol>
+<li>
+<p>Click the <strong>Start Lab</strong> button. If you need to pay for the lab, a pop-up opens for you to select your payment method.
+On the left is a panel populated with the temporary credentials that you must use for this lab.</p>
+<p><img alt="Open Google Console" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/_tHp4GI5VSDyTtdqi3qDFtevuY014F8"></p>
+</li>
+<li>
+<p>Copy the username, and then click <strong>Open Google Console</strong>.
+The lab spins up resources, and then opens another tab that shows the <strong>Choose an account</strong> page.</p>
+<p><strong><em>Tip:</em></strong> Open the tabs in separate windows, side-by-side.</p>
+</li>
+<li>
+<p>On the Choose an account page, click <strong>Use Another Account</strong>.</p>
+<p><img alt="Choose an account" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/eQ6xPnPn13GjiJP3RWlHWwiMjhooHxT"></p>
+</li>
+<li>
+<p>The Sign in page opens. Paste the username that you copied from the Connection Details panel. Then copy and paste the password.</p>
+<p><strong><em>Important:</em></strong> You must use the credentials from the Connection Details panel. Do not use your Qwiklabs credentials. If you have your own GCP account, do not use it for this lab (avoids incurring charges).</p>
+</li>
+<li>
+<p>Click through the subsequent pages:</p>
+<ul>
+<li>Accept the terms and conditions.</li>
+<li>Do not add recovery options or two-factor authentication (because this is a temporary account).</li>
+<li>Do not sign up for free trials.</li>
+</ul>
+</li>
+</ol>
+<p>After a few moments, the GCP console opens in this tab.</p>
+<aside>
+<b>Note:</b> You can view the menu with a list of GCP Products and Services by clicking the <b>Navigation menu</b> at the top-left, next to “Google Cloud Platform”.
+<img alt="Cloud Console Menu" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/9vT7xPlxoNP_PsK0J8j0ZPFB4HnnpaI">
+</aside>
+
+<h3>Activate Google Cloud Shell</h3>
+<p>Google Cloud Shell is a virtual machine that is loaded with development tools. It offers a persistent 5GB home directory and runs on the Google Cloud.
+Google Cloud Shell provides command-line access to your GCP resources.</p>
+<ol>
+<li>
+<p>In GCP console, on the top right toolbar, click the Open Cloud Shell button.</p>
+<p><img alt="Cloud Shell icon" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/vdY5e_an9ZGXw5a_ZMb1agpXhRGozsO"></p>
+</li>
+<li>
+<p>Click <strong>Continue</strong>.
+<img alt="cloudshell_continue.png" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/lr3PBRjWIrJ+MQnE8kCkOnRQQVgJnWS"></p>
+</li>
+</ol>
+<p>It takes a few moments to provision and connect to the environment. When you are connected, you are already authenticated, and the project is set to your <em>PROJECT_ID</em>. For example:</p>
+<p><img alt="Cloud Shell Terminal" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/hmMK0W41Txk+20bQyuDP9g60vCdBajI"></p>
+<p><strong>gcloud</strong> is the command-line tool for Google Cloud Platform. It comes pre-installed on Cloud Shell and supports tab-completion.</p>
+<p>You can list the active account name with this command:</p>
+<pre><code>gcloud auth list
+</code><button class="button button--copy js-copy-button-0"><i class="fa fa-clipboard"></i></button></pre>
+<p>Output:</p>
+<pre><code class="language-output prettyprint prettyprinted" style=""><span class="typ">Credentialed</span><span class="pln"> accounts</span><span class="pun">:</span><span class="pln">
+ </span><span class="pun">-</span><span class="pln"> </span><span class="str">&lt;myaccount&gt;</span><span class="pun">@&lt;</span><span class="pln">mydomain</span><span class="pun">&gt;.</span><span class="pln">com </span><span class="pun">(</span><span class="pln">active</span><span class="pun">)</span></code><button class="button button--copy js-copy-button-1"><i class="fa fa-clipboard"></i></button></pre>
+<p>Example output:</p>
+<pre><code class="language-Output prettyprint prettyprinted" style=""><span class="typ">Credentialed</span><span class="pln"> accounts</span><span class="pun">:</span><span class="pln">
+ </span><span class="pun">-</span><span class="pln"> google1623327_student@qwiklabs</span><span class="pun">.</span><span class="pln">net</span></code><button class="button button--copy js-copy-button-2"><i class="fa fa-clipboard"></i></button></pre>
+<p>You can list the project ID with this command:</p>
+<pre><code>gcloud config list project
+</code><button class="button button--copy js-copy-button-3"><i class="fa fa-clipboard"></i></button></pre>
+<p>Output:</p>
+<pre><code class="language-output prettyprint prettyprinted" style=""><span class="pun">[</span><span class="pln">core</span><span class="pun">]</span><span class="pln">
+project </span><span class="pun">=</span><span class="pln"> </span><span class="str">&lt;project_ID&gt;</span></code><button class="button button--copy js-copy-button-4"><i class="fa fa-clipboard"></i></button></pre>
+<p>Example output:</p>
+<pre><code class="language-Output prettyprint prettyprinted" style=""><span class="pun">[</span><span class="pln">core</span><span class="pun">]</span><span class="pln">
+project </span><span class="pun">=</span><span class="pln"> qwiklabs</span><span class="pun">-</span><span class="pln">gcp</span><span class="pun">-</span><span class="lit">44776a13dea667a6</span></code><button class="button button--copy js-copy-button-5"><i class="fa fa-clipboard"></i></button></pre>
+<ql-infobox>
+  Full documentation of <strong>gcloud</strong> is available on
+  <a href="https://cloud.google.com/sdk/gcloud" target="_blank">
+    Google Cloud gcloud Overview
+  </a>.
+</ql-infobox>
+
+<h2 id="step3">Copy input data</h2>
+<p>In the real world you would normally choose the variables to use as predictors after careful analysis. You might do some transformations on the input data as well. See  <a href="https://github.com/GoogleCloudPlatform/training-data-analyst/blob/master/blogs/babyweight/babyweight.ipynb">this notebook</a> for the analysis and the Dataflow code to export the necessary data from BigQuery to CSV.</p>
+<p>To save time, you'll copy the pre-processed dataset into a storage bucket that you'll create next.</p>
+<p>In the Console, go to <strong>Navigation menu</strong> &gt; <strong>Storage</strong>. Create a <strong>standard</strong> bucket. You'll be using the bucket name in the next step.</p>
+<p>Go back to Cloud Shell. Run the following to copy the necessary data into your bucket, replacing <code>&lt;BUCKET&gt;</code> with the name of the bucket you just created:</p>
+<pre><code>gsutil cp gs://cloud-training-demos/babyweight/preproc/* gs://&lt;BUCKET&gt;/babyweight/preproc/
+</code><button class="button button--copy js-copy-button-6"><i class="fa fa-clipboard"></i></button></pre>
+<p>Click <strong>Check my progress</strong> to verify the objective.</p>
+<ql-activity-tracking step="1">
+    Create a cloud storage bucket and copy input data
+</ql-activity-tracking>
+<h2 id="step4">Launch AI Platform Notebooks</h2>
+<p>To launch a Cloud AI Platform Notebook with TensorBoard support:</p>
+<p><strong>Step 1</strong></p>
+<p>Navigate to the Cloud Shell</p>
+<p><strong>Step 2</strong></p>
+<p>Paste and execute the following commands.   These commands will create a Cloud AI Platform Notebook instance with TensorBoard support.</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">export IMAGE_FAMILY</span><span class="pun">=</span><span class="str">"tf-1-14-cpu"</span><span class="pln">
+export ZONE</span><span class="pun">=</span><span class="str">"us-west1-b"</span><span class="pln">
+export INSTANCE_NAME</span><span class="pun">=</span><span class="str">"tf-tensorboard-1"</span><span class="pln">
+export INSTANCE_TYPE</span><span class="pun">=</span><span class="str">"n1-standard-4"</span><span class="pln">
+gcloud compute instances create </span><span class="str">"${INSTANCE_NAME}"</span><span class="pln"> \
+        </span><span class="pun">--</span><span class="pln">zone</span><span class="pun">=</span><span class="str">"${ZONE}"</span><span class="pln"> \
+        </span><span class="pun">--</span><span class="pln">image</span><span class="pun">-</span><span class="pln">family</span><span class="pun">=</span><span class="str">"${IMAGE_FAMILY}"</span><span class="pln"> \
+        </span><span class="pun">--</span><span class="pln">image</span><span class="pun">-</span><span class="pln">project</span><span class="pun">=</span><span class="pln">deeplearning</span><span class="pun">-</span><span class="pln">platform</span><span class="pun">-</span><span class="pln">release \
+        </span><span class="pun">--</span><span class="pln">machine</span><span class="pun">-</span><span class="pln">type</span><span class="pun">=</span><span class="str">"${INSTANCE_TYPE}"</span><span class="pln"> \
+        </span><span class="pun">--</span><span class="pln">boot</span><span class="pun">-</span><span class="pln">disk</span><span class="pun">-</span><span class="pln">size</span><span class="pun">=</span><span class="lit">200GB</span><span class="pln"> \
+        </span><span class="pun">--</span><span class="pln">scopes</span><span class="pun">=</span><span class="pln">https</span><span class="pun">://</span><span class="pln">www</span><span class="pun">.</span><span class="pln">googleapis</span><span class="pun">.</span><span class="pln">com</span><span class="pun">/</span><span class="pln">auth</span><span class="pun">/</span><span class="pln">cloud</span><span class="pun">-</span><span class="pln">platform \
+        </span><span class="pun">--</span><span class="pln">metadata</span><span class="pun">=</span><span class="str">"proxy-mode=project_editors"</span><span class="pln">
+</span></code><button class="button button--copy js-copy-button-7"><i class="fa fa-clipboard"></i></button></pre>
+<p>After a few minutes the command prompt will be returned the Cloud Shell and state that notebook was created.</p>
+<p>You can ignore any warning message such as: <strong>WARNING: Some requests generated warnings: Disk size: '200 GB' is larger than image size: '30 GB'. You might need to resize the root...</strong>.</p>
+<p><strong>Step 3</strong></p>
+<p>Click on the <strong>Navigation Menu</strong>. Navigate to <strong>Artificial Intelligence</strong>, then to <strong>AI Platform</strong>, then to <strong>Notebooks</strong>.</p>
+<p><img alt="Open new notebook" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/IB3Esl1c5JyIgNJT6ndzE8xigjj2j2t"></p>
+<p><strong>Step 4</strong></p>
+<p>Even though your gcloud command completed successfully in the Cloud Shell it may take up to 5 minutes for the new Notebook to appear.  Please press the refresh button periodically until the notebook appears.</p>
+<p><img alt="Refresh" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/a+WoPqKB7+Ok89uIEE7ZdfrVmDREfAO"></p>
+<p>Click <strong>OPEN JUPYTERLAB</strong>. A JupyterLab window will open in a new tab.</p>
+<p><img alt="Notebook is Available" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/1PK1ecta9NPV+K5nelaYeyb2kAdkOBg"></p>
+<p><img alt="JupyterLab" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/B+F4j0KFkk0cgQ8A2yFqYUV6J9slSwE"></p>
+
+<p>Click <strong>Check my progress</strong> to verify the objective.</p>
+<ql-activity-tracking step="2">
+    Create AI Platform Notebook instance
+</ql-activity-tracking>
+<h2 id="step5">Clone course repo within your AI Platform Notebooks instance</h2>
+<p>To clone the <code>training-data-analyst</code> notebook in your JupyterLab instance:</p>
+<p><strong>Step 1</strong></p>
+<p>In JupyterLab, click the Terminal icon to open a new terminal.</p>
+<p><img alt="Open Terminal" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/JE+lWdvoG3bIONccjrfxprJngYD2NsS"></p>
+<p><strong>Step 2</strong></p>
+<p>At the command-line prompt, type in the following command and press Enter.</p>
+<pre><code class="language-bash prettyprint prettyprinted" style=""><span class="pln">git clone https</span><span class="pun">://</span><span class="pln">github</span><span class="pun">.</span><span class="pln">com</span><span class="pun">/</span><span class="typ">GoogleCloudPlatform</span><span class="pun">/</span><span class="pln">training</span><span class="pun">-</span><span class="pln">data</span><span class="pun">-</span><span class="pln">analyst</span></code><button class="button button--copy js-copy-button-8"><i class="fa fa-clipboard"></i></button></pre>
+<p><strong>Step 3</strong></p>
+<p>Confirm that you have cloned the repository by double clicking on the <code>training-data-analyst</code> directory and ensuring that you can see its contents. The files for all the Jupyter notebook-based labs throughout this course are available in this directory.</p>
+<p><img alt="Training data analyst repository" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/qzsmg9brDlDnoCGfuL1VFCaAmAE9vg3"></p>
+
+<h2 id="step6">Execute training and prediction jobs</h2>
+<p><strong>Step 1</strong></p>
+<p>In the notebook interface, navigate to <strong>training-data-analyst &gt; blogs &gt; babyweight</strong> and open <strong>train_deploy.ipynb</strong>.</p>
+<p><strong>Step 2</strong></p>
+<p>From the menu, click <strong>Edit &gt; Clear All Outputs</strong>.</p>
+<p><strong>Step 3</strong></p>
+<p>From the top right corner, select <strong>Python 2</strong> and change it to <strong>Python 3</strong>.</p>
+<p><strong>Step 4</strong></p>
+<p>Read the narrative and click <strong>Shift + Enter</strong> (or Run) on each cell in the notebook.</p>
+<h2 id="step7">Test your knowledge</h2>
+<p>Test your knowledge about Google cloud Platform by taking our quiz.</p>
+<p><ql-true-false-probe answer="true" stem="Currently as far as Tensorflow is concerned, the only supported GPUs are that of NVIDIA.">
+</ql-true-false-probe></p>
+<h2 id="step8">Congratulations!</h2>
+<p>You learned how to train, evaluate, and deploy a machine learning model in AI Platform Notebooks.</p>
+<h5>Manual Last Updated February 27, 2020 🎃</h5>
+<p>Copyright 2019 Google LLC All rights reserved. Google and the Google logo are trademarks of Google LLC. All other company and product names may be trademarks of the respective companies with which they are associated.</p>
+
+
+
+</div>
+<div class="js-lab-content-outline lab-content__outline">
+<a href="https://googlecoursera.qwiklabs.com/focuses/52013#step1" class="">Overview</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step2" class="">Setup</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step3" class="">Copy input data</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step4" class="">Launch AI Platform Notebooks</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step5" class="">Clone course repo within your AI Platform Notebooks instance</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step6" class="">Execute training and prediction jobs</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step7" class="">Test your knowledge</a><a href="https://googlecoursera.qwiklabs.com/focuses/52013#step8" class="">Congratulations!</a>
+</div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+<div class="lab-assessment__tab js-lab-assessment-tab">
+<h5 class="small-label">
+Score
+</h5>
+<h3 class="js-lab-assessment-total-score">
+—/100
+</h3>
+<iframe class="l-ie-iframe-fix" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(1).html"></iframe>
+</div>
+<div class="lab-assessment__panel js-lab-assessment-panel">
+<!-- / If lab_instance has is started and assessment is generated, use -->
+<!-- / lab_instance.assessment, otherwise use lab.assessment_manual -->
+<div class="lab-assessment__step">
+<p class="lab-assessment__step__title">
+Create a cloud storage bucket and Copy input data
+</p>
+<p class="button button--assessment js-show-run-step-button" step_no="1">
+Run Step
+</p>
+<p class="lab-assessment__step__score">
+<span class="js-assessment-step-score-1">
+</span>
+/ 50
+</p>
+</div>
+
+<div class="lab-assessment__step">
+<p class="lab-assessment__step__title">
+Create AI Platform Notebooks instance.
+</p>
+<p class="button button--assessment js-show-run-step-button" step_no="2">
+Run Step
+</p>
+<p class="lab-assessment__step__score">
+<span class="js-assessment-step-score-2">
+</span>
+/ 50
+</p>
+</div>
+
+<iframe class="l-ie-iframe-fix" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(2).html"></iframe>
+</div>
+<div class="lab-introduction js-lab-introduction is-hidden">
+<div class="lab-introduction__inner">
+<h1 class="headline-1">Welcome to Your First Lab!</h1>
+<ql-icon-button class="js-skip-button">close</ql-icon-button>
+<div class="lab-introduction__video">
+<iframe allow="autoplay; encrypted-media" allowfullscreen="" frameborder="0" id="lab-introduction" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/yF7EDXKTmoQ.html"></iframe>
+</div>
+<a class="js-skip-button button button--outline">Skip this video</a>
+</div>
+</div>
+
+
+
+</div>
+</main>
+<div class="modal fade" id="lab-details-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<div class="modal-body">
+<p class="l-mbm">
+In this lab you train, evaluate, and deploy a machine learning model to predict a baby’s weight.  You then send requests to the model to make online predictions.  This lab is part of a series of labs on processing scientific data.
+</p>
+<p class="small-label l-mbs">
+<strong>
+Duration:
+</strong>
+0m setup
+·
+90m access
+·
+90m completion
+</p>
+<p class="small-label l-mbs">
+<span><strong>Levels: </strong>expert</span>
+</p>
+<p class="small-label">
+<strong>
+Permalink:
+</strong>
+<a href="https://googlecoursera.qwiklabs.com/catalog_lab/2515">https://googlecoursera.qwiklabs.com/catalog_lab/2515</a>
+</p>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Got It
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+</div>
+
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(3).html"></iframe>
+</div>
+<div class="modal fade" id="lab-review-modal">
+<div class="modal-container">
+<div class="mdl-shadow--24dp modal-content">
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="https://googlecoursera.qwiklabs.com/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="✓"><div class="modal-body">
+<p class="label">
+How satisfied are you with this lab?*
+</p>
+<div class="rateit js-rateit" data-rateit-max="5" data-rateit-min="0" data-rateit-resetable="false" data-rateit-step="1" data-rateit-value="0"><div class="rateit-reset" style="display: none;"></div><div class="rateit-range" style="width: 80px; height: 16px;"><div class="rateit-selected" style="height: 16px; width: 0px;"></div><div class="rateit-hover" style="height:16px"></div></div></div>
+<div class="l-mtm">
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="1018107" name="lab_review[user_id]" id="lab_review_user_id"></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" value="6631" name="lab_review[classroom_id]" id="lab_review_classroom_id"></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="2515" name="lab_review[lab_id]" id="lab_review_lab_id"></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" value="52013" name="lab_review[focus_id]" id="lab_review_focus_id"></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating"></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Comment</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment"></textarea></div></div>
+</div>
+</div>
+<div class="modal-actions">
+<a class="mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect" data-dismiss="modal" data-upgraded=",MaterialButton,MaterialRipple">
+Cancel
+<span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></a>
+<input type="submit" name="commit" value="Submit" disabled="disabled" class="btn mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="submit" data-disabled="false" data-disable-with="Submit" data-upgraded=",MaterialButton,MaterialRipple"><span class="mdl-button__ripple-container"><span class="mdl-ripple"></span></span></input>
+</div>
+</form>
+
+</div>
+</div>
+<iframe class="l-ie-iframe-fix" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(4).html"></iframe>
+</div>
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    initLabContent( );
+  ql.labOutline.links.init();
+  ql.labOutline.layout.init();
+  initLabReviewModal();
+  ql.labAssessment.init();
+  ql.labIntroduction.init( true );
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?\n","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.\n","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.initHeader();
+  ql.navigation.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+<style>
+  .mdl-layout__container {
+    position: static
+  }
+</style>
+
+
+<iframe data-product="web_widget" title="No content" tabindex="-1" aria-hidden="true" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(5).html" style="width: 0px; height: 0px; border: 0px; position: absolute; top: -9999px;"></iframe><div><iframe title="Opens a widget where you can chat to one of our agents" id="launcher" tabindex="0" class="zEWidget-launcher zEWidget-launcher--active" style="border: none; background: transparent; z-index: 999998; transform: translateZ(0px); position: fixed; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; opacity: 1; height: 50px; max-height: 551px; min-height: 50px; margin: 10px 20px; right: 0px; bottom: 0px; width: 112px;width: 112px;" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(6).html"></iframe></div><div><iframe title="Find more information here" id="webWidget" tabindex="-1" class="zEWidget-webWidget " style="border: none; background: transparent; z-index: 999999; transform: translateZ(0px); position: fixed; transition-duration: 250ms; transition-timing-function: cubic-bezier(0.645, 0.045, 0.355, 1); transition-property: opacity, top, bottom; opacity: 0; width: 357px; height: 100%; max-height: 565px; min-height: 150px; margin-left: 8px; margin-right: 8px; top: -9999px; visibility: hidden;" src="./Predict Babyweight with TensorFlow using AI Platform _ Qwiklabs_files/saved_resource(7).html"></iframe></div></body></html>
