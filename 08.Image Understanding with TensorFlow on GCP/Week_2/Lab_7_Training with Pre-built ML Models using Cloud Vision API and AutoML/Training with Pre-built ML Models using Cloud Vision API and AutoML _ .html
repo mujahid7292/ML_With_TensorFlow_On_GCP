@@ -1,0 +1,537 @@
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+<meta content='[]' name='active-experiments'>
+<meta content='{&quot;userId&quot;:1018107}' name='help-api-product-data'>
+<meta name="csrf-param" content="authenticity_token" />
+<meta name="csrf-token" content="GqfgrbJK+2tSAtLrW/HH+akX6eZ7z2pBepzP2SmtuOgdWVZgtdkqYeVgBEMERjSyxvEwtVIgjJ7gUHhpFqxNvw==" />
+<title>Training with Pre-built ML Models using Cloud Vision API and AutoML | Qwiklabs</title>
+<meta content='width=device-width, initial-scale=1.0, maximum-scale=1, user-scalable=0' name='viewport'>
+<meta content='In this lab, you will experiment with pre-built models (no coding). First we’ll start with the pre-trained Vision API where we don’t need to bring our own data and then we’ll progress into AutoML for more sophisticated custom labelling that we need' name='description'>
+<meta content='Qwiklabs' name='author'>
+<meta content='1rRsY0INj8RvwB5EF5pwdxt2A2P9aDgAlsICaJ0d5w0' name='google-site-verification'>
+<meta content='Training with Pre-built ML Models using Cloud Vision API and AutoML | Qwiklabs' property='og:title'>
+<meta content='website' property='og:type'>
+<meta content='/favicon-144.png' property='og:image'>
+<meta content='Qwiklabs' property='og:site_name'>
+<meta content='In this lab, you will experiment with pre-built models (no coding). First we’ll start with the pre-trained Vision API where we don’t need to bring our own data and then we’ll progress into AutoML for more sophisticated custom labelling that we need' property='og:description'>
+<meta content='/qwiklabs_logo_900x887.png' property='og:logo' size='900x887'>
+<meta content='/qwiklabs_logo_994x187.png' property='og:logo' size='994x187'>
+<meta content='#3681E4' property='msapplication-TileColor'>
+<meta content='/favicon-144.png' property='msapplication-TileImage'>
+<link href='/favicon-32.png' rel='shortcut icon'>
+<link color='#3681E4' href='/favicon-svg.svg' rel='mask-icon'>
+<link href='/favicon-180.png' rel='apple-touch-icon-precomposed'>
+<link rel="stylesheet" media="screen" href="https://fonts.googleapis.com/css?family=Oswald:400|Roboto+Mono:400,700|Roboto:300,400,500,700|Google+Sans:300,400,500,700|Google+Sans+Display:400|Material+Icons|Google+Material+Icons" />
+
+
+<!--[if lt IE 9]>
+<script src='http://html5shim.googlecode.com/svn/trunk/html5.js' type='text/javascript'></script>
+<![endif]-->
+<!--[endif]>  <![endif]-->
+<script type="text/javascript" src="https://gc.kis.v2.scr.kaspersky-labs.com/FD126C42-EBFA-4E12-B309-BB3FDD723AC1/main.js?attr=2jErcyU5Kpe8cvWbrhMNmvbOBBh6BT0R-FWdkKK9QVo3BPY0oc7cR0GpsX81VXjiM6dzdt_9CKUHg6mklkly7DVEseo9n0sRTcip7hcp5fRC9MmhXHAPK4Kl6XiUwOsJ" charset="UTF-8"></script><script>
+//<![CDATA[
+window.gon={};gon.current_user={"firstname":"Saifullah al","lastname":"Mujahid","fullname":"Saifullah al Mujahid","company":"Login with Google","email":"mujahid7292@gmail.com","origin":"google-run, direct, nEHJKyBzts1wgcYE7A3w","subscriptions":0,"id":"594ecfdd6abffec37cc71dd7002ec821","qlCreatedAt":"2018-08-09 10:26:13 UTC","optIn":true};gon.segment="j4Im8pqIko0Lxq4wVVZWMPMM0EroHUvb";gon.deployment="googlecoursera-run";
+//]]>
+</script>
+<script type='application/ld+json'>
+{
+  "@context": "http://schema.org",
+  "@type": "WebSite",
+  "url": "https://www.qwiklabs.com/",
+  "potentialAction": {
+    "@type": "SearchAction",
+    "target": "https://www.qwiklabs.com/catalog?keywords={search_term_string}",
+    "query-input": "required name=search_term_string"
+  }
+}
+</script>
+<script id='ze-snippet' src='https://static.zdassets.com/ekr/snippet.js?key=511e4158-0aec-4e3c-b2e6-4daa1769f51e'></script>
+
+
+
+<link rel="stylesheet" media="all" href="https://cdn.qwiklabs.com/assets/application-2e423eed83f948fe110cdfc2d040441c5c4e506ebcf3467e7d396035b71289ce.css" />
+<script>
+  EVENT_SOURCE_BASE_URL = "https://googlecoursera-run.qwiklabs.com/nchan-sub?id=";
+</script>
+<script src="https://cdn.qwiklabs.com/polyfills/webcomponents-loader.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/hallofmirrors/hallofmirrors-a7701e05dd5ffc8f31a30151375e333442e75ca34db62e41fe9298b903684707.js"></script>
+<script src="https://www.youtube.com/iframe_api"></script>
+<script src="https://cdn.qwiklabs.com/assets/vendor-45d462772c30000424907184f70c7157e95fb6227698d1671c5051818a6f60d8.js"></script>
+<script src="https://cdn.qwiklabs.com/assets/application-9830b044afa5cd292d554676d3fb131876b297dc6d4546e0e5472013910b8df5.js"></script>
+</head>
+<body class='focuses focuses-show lab-show l-full no-nav'>
+<div class='header-container'>
+<div class='header'>
+<a class='mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect header__button header__button--nav header__nav-panel-button js-nav-toggle'>
+<i class='material-icons'>menu</i>
+</a>
+<div class='header__title'>
+<a class="mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--nav" href="https://www.coursera.org/"><ql-icon>arrow_back</ql-icon></a>
+
+<h1 class='headline-5'>
+Training with Pre-built ML Models using Cloud Vision API and AutoML
+</h1>
+</div>
+<div class='header__actions'>
+<a class='mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button header__button--action header__button--search js-header-search-bar-button'>
+<i class='material-icons'>search</i>
+</a>
+<a class="mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect" id="toggle-lab-control-panel" href="javascript:;"><i class='material-icons'>description</i>
+</a><div class='mdl-tooltip js-tooltip' data-mdl-for='toggle-lab-control-panel'>
+Toggle Lab Panel
+</div>
+
+<ql-help context="lab" productdata="{&quot;userId&quot;:1018107}" data-analytics-action="opened_help" data-analytics-label="lab"></ql-help>
+<a class='header-my-account-button mdl-button mdl-button--icon mdl-js-button mdl-js-ripple-effect js-my-account-button'>
+<img class="avatar " alt="avatar image" src="https://secure.gravatar.com/avatar/446d5a9572a0ed0a6dd56cb9e8666994.png?s=80&amp;d=mm" />
+</a>
+<div class='header-my-account-menu js-my-account-menu'>
+<div class='card elevation-2 no-padding'>
+<div class='my-account-menu__top'>
+<img class="avatar " alt="avatar image" src="https://secure.gravatar.com/avatar/446d5a9572a0ed0a6dd56cb9e8666994.png?s=80&amp;d=mm" />
+<div class='my-account-menu__info'>
+<h4 class='subtitle-headline-1'>
+Saifullah al Mujahid
+</h4>
+<p class='body-2 text--gray'>
+<span>mujahid7292@gmail.com</span>
+</p>
+<a class="button" href="/my_account/profile">My Account</a>
+</div>
+</div>
+<div class='my-account-menu__bottom'>
+<a class="text--green subtitle-headline-2" href="/my_account/credits">5 Credits
+</a><a data-analytics-action="clicked_sign_out" class="button button--hairline" rel="nofollow" data-method="delete" href="/users/sign_out">Sign Out</a>
+</div>
+</div>
+</div>
+
+</div>
+</div>
+<div class='header__search-bar js-header-search-bar'>
+<form id="catalog-search-mobile" onsubmit="ql.catalogSearchFilter(); return false;" action="/searches/elasticsearch" accept-charset="UTF-8" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><input type="hidden" name="authenticity_token" value="8CyWvgQ2iQuZxgOnRbssetx3TeVYJaXG7zCFpVJzdVj30iBzA6VYAS6k1Q8aDN8xs5GUtnHKQxl1/DIVbXKADw==" />
+<input type="text" name="keywords" id="keywords" placeholder="Search" maxlength="255" aria-label="catalog search bar" />
+</form>
+
+<a class='mdl-button mdl-js-button mdl-button--icon mdl-js-ripple-effect header__button'>
+<i class='material-icons'>close</i>
+</a>
+</div>
+</div>
+
+<nav class='nav-bar'>
+<a class="nav-bar__item js-navigation-button" href="/"><ql-icon class='nav-bar__item__icon'>
+home
+</ql-icon>
+<span class='nav-bar__item__label'>
+Home
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="/catalog"><ql-icon class='nav-bar__item__icon'>
+school
+</ql-icon>
+<span class='nav-bar__item__label'>
+Catalog
+</span>
+</a>
+<a class="nav-bar__item js-navigation-button" href="/my_learning"><ql-icon class='nav-bar__item__icon'>
+event_note
+</ql-icon>
+<span class='nav-bar__item__label'>
+My Learning
+</span>
+</a>
+</nav>
+
+<nav class='nav-panel js-nav-panel'>
+<div class='nav-panel__logo'>
+<div class='logo logo--blue'></div>
+</div>
+<a title="Home" tabindex="-1" class="nav-panel__item js-navigation-button" href="/"><ql-icon class='nav-panel__item__icon'>
+home
+</ql-icon>
+<div class='nav-panel__item__label'>
+Home
+</div>
+</a>
+<a title="Catalog" tabindex="-1" class="nav-panel__item js-navigation-button" href="/catalog"><ql-icon class='nav-panel__item__icon'>
+school
+</ql-icon>
+<div class='nav-panel__item__label'>
+Catalog
+</div>
+</a>
+<a title="My Learning" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_learning"><ql-icon class='nav-panel__item__icon'>
+event_note
+</ql-icon>
+<div class='nav-panel__item__label'>
+My Learning
+</div>
+</a>
+<div class='nav-panel__spacer'></div>
+<a title="Profile" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_account/profile"><ql-icon class='nav-panel__item__icon'>
+account_circle
+</ql-icon>
+<div class='nav-panel__item__label'>
+Profile
+</div>
+</a>
+<a title="Credits &amp; Subscriptions" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_account/credits"><ql-icon class='nav-panel__item__icon'>
+money
+</ql-icon>
+<div class='nav-panel__item__label'>
+Credits &amp; Subscriptions
+</div>
+</a>
+<a title="Security" tabindex="-1" class="nav-panel__item js-navigation-button" href="/my_account/security"><ql-icon class='nav-panel__item__icon'>
+security
+</ql-icon>
+<div class='nav-panel__item__label'>
+Security
+</div>
+</a>
+<div class='nav-panel__spacer'></div>
+<a class="nav-panel__item" tabindex="-1" href="#"><ql-help>
+<div class='nav-panel__help-item'>
+<ql-icon class='nav-panel__item__icon'>help</ql-icon>
+<div class='nav-panel__item__label'>Help</div>
+</div>
+</ql-help>
+</a><div class='nav-panel__small-links'>
+<a tabindex="-1" href="/privacy_policy">Privacy</a>
+<a tabindex="-1" href="/terms_of_service">Terms</a>
+</div>
+</nav>
+<div class='nav-panel__overlay js-nav-toggle'></div>
+
+<main class='js-main'>
+<span class='hidden' id='flash-sibling-before'></span>
+
+<div class='l-main-wrapper' id='main-wrapper'>
+
+
+
+
+
+
+
+<div class='js-lab-state' data-analytics-payload='{&quot;label&quot;:&quot;Training with Pre-built ML Models using Cloud Vision API and AutoML&quot;,&quot;lab_name&quot;:&quot;Training with Pre-built ML Models using Cloud Vision API and AutoML&quot;,&quot;classroom_name&quot;:null,&quot;deployment&quot;:&quot;googlecoursera-run&quot;}' data-focus-id='8949896' data-lab-billing-limit='0.0' data-lab-duration='9000' data-parent='lti_session'></div>
+<ql-lab-control-panel class='js-lab-control-panel l-lab-control-panel' connectionDetails='[]' connectionFiles='[]' labControlButton='{&quot;disabled&quot;:false,&quot;pending&quot;:false,&quot;running&quot;:false}' labTimer='{&quot;ticking&quot;:false,&quot;secondsRemaining&quot;:9000}' studentResources='[]'></ql-lab-control-panel>
+<div class='l-lab-main-body'>
+<ql-cloud-terminal></ql-cloud-terminal>
+<div class='js-lab-content lab-content'>
+<div class='alert alert--fake js-alert'>
+<p class='alert__message js-alert-message'></p>
+<a class='alert__close js-alert-close'>
+<i class='fa fa-times'></i>
+</a>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+<div class='lab-content__markdown-wrapper'>
+<div class='lab-preamble'>
+<h1 class='lab-preamble__title'>
+Training with Pre-built ML Models using Cloud Vision API and AutoML
+</h1>
+<div class='lab-preamble__details subtitle-headline-1'>
+<span>2 hours 30 minutes</span>
+<span>Free</span>
+<div class='lab__rating'>
+<a href="/focuses/8949896/reviews?parent=catalog"><div class='rateit' data-rateit-readonly='true' data-rateit-value='4.1446'></div>
+
+</a><a data-target='#lab-review-modal' data-toggle='modal'>
+Rate Lab
+</a>
+</div>
+</div>
+</div>
+
+<div class='lab-content__inner-wrapper'>
+<div class='js-markdown-instructions lab-content__markdown markdown-lab-instructions' id='markdown-lab-instructions'>
+
+
+
+<h2 id="step1">Overview</h2>
+<p><em>Duration is 1 min</em></p>
+<p>In this lab you will upload images to Cloud Storage and use them to train a custom model to recognize different types of clouds (cumulus, cumulonimbus, etc.).</p>
+<h3><strong>What you learn</strong></h3>
+<p>In this lab, you learn how to:</p>
+<ul>
+<li>
+<p>Upload a labeled dataset to Google Cloud Storage and connect it to AutoML Vision with a CSV label file.</p>
+</li>
+<li>
+<p>Train a model with AutoML Vision and evaluate its accuracy.</p>
+</li>
+<li>
+<p>Generate predictions on your trained model.</p>
+</li>
+</ul>
+<h2 id="step2">Set up AutoML Vision</h2>
+<p>AutoML Vision provides an interface for all the steps in training an image classification model and generating predictions on it. Start by enabling the Cloud AutoML API.</p>
+<p>Open the navigation menu and and select <strong>APIs &amp; Services</strong> &gt; <strong>Library</strong>. In the search bar type in "Cloud AutoML API". Click on the <strong>Cloud AutoML API</strong> result and then click <strong>ENABLE</strong>.</p>
+<p>This may take a minute. You should now be on the following page (ensure that the <strong>MANAGE</strong> button appears and <strong>API enabled</strong> is also displayed):</p>
+<p><img alt="AutoMLEnabled.png" src="https://cdn.qwiklabs.com/rs7fiCKo2xo3ErUPW13RoitevfyePpn2tbI4acGwfOk%3D"></p>
+
+<p>Next you will need to issue each of the commands that below appear in the GCP Console. In Cloud Shell paste these commands to create environment variables for your Project ID and Qwiklabs Username, replacing <code>&lt;QWIKLABS_USERNAME&gt;</code> with the user name you logged into the lab with:</p>
+<pre><code>export PROJECT_ID=$DEVSHELL_PROJECT_ID&#x000A;export QWIKLABS_USERNAME=&lt;QWIKLABS_USERNAME&gt;&#x000A;</code></pre>
+<p>Now, create a Storage Bucket for the images you will use in testing.  Create one by running the following command:</p>
+<pre><code>gsutil mb -p $PROJECT_ID \&#x000A;    -c regional    \&#x000A;    -l us-central1 \&#x000A;    gs://$PROJECT_ID-vcm/&#x000A;</code></pre>
+<p>Leave your Cloud Shell window open for additional steps to follow.</p>
+
+<h2 id="step3">Upload training images to Google Cloud Storage</h2>
+<p>In order to train a model to classify images of clouds, you need to provide labeled training data so the model can develop an understanding of the image features associated with different types of clouds. In this example your model will learn to classify three different types of clouds: cirrus, cumulus, and cumulonimbus. To use AutoML Vision you need to put your training images in Google Cloud Storage.</p>
+<p>In the GCP console, open the <strong>Navigation menu</strong> and select <strong>Storage</strong> &gt; <strong>Browser</strong>:</p>
+<p><img alt="b91e6a77309137cf.png" src="https://cdn.qwiklabs.com/YjeT9%2FI0vbVTm8jEKjpWvL2yQdCuNCqQTnfTf%2Fsabmg%3D"></p>
+<p>Once there, you should see the bucket from the last step.</p>
+<p>Before you add the cloud images, create an environment variable with the name of your bucket by running the following command in Cloud Shell, replacing <code>YOUR_BUCKET_NAME</code> in the command below with the name of your bucket:</p>
+<pre><code>export BUCKET=YOUR_BUCKET_NAME&#x000A;</code></pre>
+<p>The training images are publicly available in a Cloud Storage bucket. Use the <code>gsutil</code> command line utility for Cloud Storage to copy the training images into your bucket:</p>
+<pre><code>gsutil -m cp -r gs://automl-codelab-clouds/* gs://${BUCKET}&#x000A;</code></pre>
+<p>When the images finish copying, click the <strong>Refresh</strong> button at the top of the Cloud Storage browser. Then click on your bucket name. You should see 3 folders of photos for each of the 3 different cloud types to be classified:</p>
+<p><img alt="autoML_bucket_folders.png" src="https://cdn.qwiklabs.com/TFSQYkum%2FFko1u1cJk26A5mu1hf%2FWtqh3hGCJSjYBso%3D"></p>
+<p>If you click on the individual image files in each folder, and then click once more when you see the URL, you can see the photos you'll be using to train your model for each type of cloud.</p>
+<h2 id="step4">Create a dataset</h2>
+<p>Now that your training data is in Cloud Storage, you need a way for AutoML Vision to access it. You'll create a CSV file where each row contains a URL to a training image and the associated label for that image. This CSV file has been created for you; you just need to update it with your bucket name.</p>
+<p>Run the following command to copy the file to your Cloud Shell instance:</p>
+<pre><code>gsutil cp gs://automl-codelab-metadata/data.csv .&#x000A;</code></pre>
+<p>Then update the CSV with the files in your project:</p>
+<pre><code>sed -i -e "s/placeholder/${BUCKET}/g" ./data.csv&#x000A;</code></pre>
+<p>Now you're ready to upload this file to your Cloud Storage bucket:</p>
+<pre><code>gsutil cp ./data.csv gs://${BUCKET}&#x000A;</code></pre>
+<p>Once that comand completes, click the <strong>Refresh bucket</strong> button. Confirm that you see the <code>data.csv</code> file in your bucket.</p>
+<p><img alt="csvfile.png" src="https://cdn.qwiklabs.com/bDMVE91sGZmtAyp6F%2Fpp%2B%2FWHnEjfP%2B1qtVtqXsG5oIY%3D"></p>
+<p>Navigate to the <a href="https://console.cloud.google.com/vision/datasets">AutoML Vision</a> Datasets page.</p>
+<p><img alt="automl.png" src="https://cdn.qwiklabs.com/Hjfq%2B9uzvP9sV4G3vQBdrzxqAOzQPyGPYX7mNmYgvaI%3D"></p>
+<p>At the top of the console, click <strong>+ NEW DATASET</strong>.</p>
+<p>Type "clouds" for the Dataset name.</p>
+<p>Leave "Single-label Classification" checked.</p>
+<p>Click <strong>CREATE DATASET</strong> to continue</p>
+<p><img alt="dataset1.png" src="https://cdn.qwiklabs.com/kcW88jGJf8MImoDhmT94CogyHkcWM9WC%2BFVx3%2F%2Bt4Cg%3D"></p>
+<p>On the next screen you will choose the location of your training images (the ones you uploaded in the previous step)</p>
+<p>Choose <strong>Select a CSV file on Cloud Storage</strong> and add the file name to the URL for the file you just uploaded - <code>gs://your-project-name-vcm/data.csv</code>.  You may also use the browse function to find the csv file.  Once you see the white in green checkbox you may select <strong>CONTINUE</strong> to proceed.</p>
+<p><img alt="datasetfiles.png" src="https://cdn.qwiklabs.com/dIzLN7u7F0WLWyzoYvbihDQUsmIQsS4DKdyxNMSUAK8%3D"></p>
+<p>It will take around 15 to 25 minutes for your images to import and be aligned with their categories. Once the import has completed you'll be returned to the "Select files to import page", click the <strong>IMAGES</strong> tab to see the images in your dataset.</p>
+
+<h2 id="step5">Inspect images</h2>
+<p>Next proceed with a brief examination of the images.</p>
+<p><img alt="imagesinspection.png" src="https://cdn.qwiklabs.com/raUewnpHezWXdm%2FvjSd5BWTZqMSANlcv310vULyDJBQ%3D"></p>
+<p>Try filtering by different labels in the left menu (i.e. click cumulus) to review the training images:</p>
+<p><img alt="44f615aeaccfdd8e.png" src="https://cdn.qwiklabs.com/JCLK1LJX2s8Ys6F1h%2BU8sk%2FfzbM7MHd6GqGvk3AWL9U%3D"></p>
+<aside class="special"><p><strong>Note: </strong>If you were building a production model, you'd want <em>at least</em> 100 images per label to ensure high accuracy. This is just a demo so only 20 images of each type were used so the model could train quickly.</p>
+</aside>
+<p>If any images are labeled incorrectly you can click on them to switch the label or delete the image from your training set:</p>
+<p><img alt="imagedetail.png" src="https://cdn.qwiklabs.com/kHAeXRUT6rmAE9L40spHuXF65dCze2qExoLglLFGCpU%3D"></p>
+<p>To see a summary of how many images you have for each label, click on <strong>LABEL STATS</strong>. You should see the following pop-out box show up on the right side of your browser.  Press <strong>DONE</strong> after reviewing the list.</p>
+<p><img alt="labelstats.png" src="https://cdn.qwiklabs.com/4O66Gd4AF5J4yXkYG4%2FeuMAnrNDqMotUDvjVxlHy0nw%3D"></p>
+<aside class="special"><p><strong>Note: </strong>If you are working with a dataset that isn't already labeled, AutoML Vision provides an in-house human labeling service.</p>
+</aside>
+<h2 id="step6">Train your model</h2>
+<p>You're ready to start training your model! AutoML Vision handles this for you automatically, without requiring you to write any of the model code.</p>
+<p>To train your clouds model, go to the <strong>TRAIN</strong> tab and click <strong>START TRAINING</strong>.</p>
+<p><img alt="starttraining.png" src="https://cdn.qwiklabs.com/RigGFR4aAzU6jsbW%2BEhvBy9JZRmY82R1AlQaOc1dBZE%3D"></p>
+<p>Enter a name for your model, or use the default auto-generated name.</p>
+<p>Leave <strong>Cloud hosted</strong> selected and click <strong>CONTINUE</strong>.</p>
+<p><img alt="train1.png" src="https://cdn.qwiklabs.com/un1uIWJoWbt%2BkAK7oa9TMsuayRJgZdzXYJLf%2Bv%2FHXAE%3D"></p>
+<p>For the next step, type the value "<strong>8</strong>" into the <strong>Budget *</strong> box and check "<strong>Deploy model to 1 node after training</strong>."  This process (auto-deploy) will make your model immediately available for predictions after testing is complete.</p>
+<p>Click <strong>START TRAINING</strong>.</p>
+<p><img alt="SetBudget8.png" src="https://cdn.qwiklabs.com/CCQeA6rXTOh0r2PZDoUw7GVDvyqcoQFkTzcy5YJNDNQ%3D"></p>
+<p>Training this dataset will take around <strong>55 to 90 minutes</strong> to complete.  The total training time includes node training time as well as infrastructure set up and tear down.</p>
+<h2 id="step7">Evaluate your model</h2>
+<p>After training is complete, click on the <strong>EVALUATE</strong> tab.  Here you'll see information about Precision and Recall of the model. It should resemble the following:</p>
+<p><img alt="evaluatetab.png" src="https://cdn.qwiklabs.com/FUwH721oeEyGsrJnOs%2FZNf4%2BNk2Vjcn7PAmfC7WGZA4%3D"></p>
+<p>You can also adjust the <strong>Confidence threshold</strong> slider to see its impact.</p>
+<p>Finally, scroll down to take a look at the <strong>Confusion matrix</strong>.</p>
+<p><img alt="confusionmatrix.png" src="https://cdn.qwiklabs.com/ykc%2B2wRfelH8KE2%2F1TyNIJDHz6DAq9SuBRqCT0XsDQA%3D"></p>
+<p>This tab provides some common machine learning metrics to evaluate your model accuracy and see where you can improve your training data. Since the focus for this lab was not on accuracy, move on to the next section about predictions section. Feel free to browse the accuracy metrics on your own.</p>
+<h2 id="step8">Generate predictions</h2>
+<p>Now it's time for the most important part: generating predictions on your trained model using data it hasn't seen before.</p>
+<p>There are a few ways to generate predictions. In this lab you'll use the UI to upload images. You'll see how your model does classifying these two images (the first is a cirrus cloud, the second is a cumulonimbus).</p>
+<p>First, download these images to your local machine by right-clicking on each of them (<strong>Note</strong>:  You may want to assign a simple name like 'Image1' and 'Image2' to assist with uploading later):</p>
+<p><img alt="a4e6d50183e83703.png" src="https://cdn.qwiklabs.com/N2psyplM3kFK9NEjjpak3CPIhh8IurY7Tn9vqzi4r8M%3D"></p>
+<p><img alt="1d4aaa17ec62e9ba.png" src="https://cdn.qwiklabs.com/GZlBRmAKGzsDoT8yNRCh6VmxflxLEQEkiKPohYwja94%3D"></p>
+<p>Navigate to the <strong>TEST &amp; USE</strong> tab in the AutoML UI:</p>
+<p>On this page you will see that the model you just trained and deployed is listed in the "Model" pick list.</p>
+<p>Click <strong>UPLOAD IMAGES</strong> and upload the cloud sample images you just saved to your local disk (you may select both images at the same time).</p>
+<p><img alt="testanduse.png" src="https://cdn.qwiklabs.com/9TKtlZ5zwtZbzrJ%2FPRL154A4mwyTSm74Yy1kVPbcJsM%3D"></p>
+<p>When the prediction request completes you should see something like the following:</p>
+<p><img alt="output1.png" src="https://cdn.qwiklabs.com/btq3FuO13W1gt3MdHgzlJO1mr11X5VzDQKj%2FdDosvoQ%3D"></p>
+<p><img alt="output2.png" src="https://cdn.qwiklabs.com/HH5%2FheO%2BD08L8SAdzpHSumH9yDdAeYAv9dMk%2FHu4EtA%3D"></p>
+<p>Excellent - the model classified each type of cloud correctly!</p>
+
+<h2 id="step9">Congratulations!</h2>
+<p>You've learned how to train your own custom machine learning model and generate predictions on it through the web UI. Now you've got what it takes to train a model on your own image dataset.</p>
+<h4><strong>What was covered</strong></h4>
+<ul>
+<li>
+<p>Uploading training images to Cloud Storage and creating a CSV for AutoML Vision to find these images.</p>
+</li>
+<li>
+<p>Reviewing labels and training a model in the AutoML Vision UI.</p>
+</li>
+<li>
+<p>Generating predictions on new cloud images.</p>
+</li>
+</ul>
+<h3>Next steps / learn more</h3>
+<ul>
+<li>Watch the  <a href="https://www.youtube.com/watch?v=GbLQE2C181U">intro video</a>
+</li>
+<li>Learn more about how AutoML Vision works by listening to the  <a href="https://www.gcppodcast.com/post/episode-109-cloud-automl-vision-with-amy-unruh-and-sara-robinson/">GCP Podcast episode</a>
+</li>
+<li>Read the announcement  <a href="https://www.blog.google/topics/google-cloud/cloud-automl-making-ai-accessible-every-business/">blog post</a>
+</li>
+<li>Learn how to  <a href="https://cloud.google.com/vision/automl/docs/beginners-guide">perform each step with the API</a>
+</li>
+</ul>
+<h2 id="step10">End your lab</h2>
+<p>When you have completed your lab, click <strong>End Lab</strong>. Qwiklabs removes the resources you’ve used and cleans the account for you.</p>
+<p>You will be given an opportunity to rate the lab experience. Select the applicable number of stars, type a comment, and then click <strong>Submit</strong>.</p>
+<p>The number of stars indicates the following:</p>
+<ul>
+<li>1 star = Very dissatisfied</li>
+<li>2 stars = Dissatisfied</li>
+<li>3 stars = Neutral</li>
+<li>4 stars = Satisfied</li>
+<li>5 stars = Very satisfied</li>
+</ul>
+<p>You can close the dialog box if you don't want to provide feedback.</p>
+<p>For feedback, suggestions, or corrections, please use the <strong>Support</strong> tab.</p>
+
+<p>©2020 Google LLC All rights reserved. Google and the Google logo are trademarks of Google LLC. All other company and product names may be trademarks of the respective companies with which they are associated.</p>
+
+
+
+</div>
+<div class='js-lab-content-outline lab-content__outline'>
+<a href='#step1'>Overview</a><a href='#step2'>Set up AutoML Vision</a><a href='#step3'>Upload training images to Google Cloud Storage</a><a href='#step4'>Create a dataset</a><a href='#step5'>Inspect images</a><a href='#step6'>Train your model</a><a href='#step7'>Evaluate your model</a><a href='#step8'>Generate predictions</a><a href='#step9'>Congratulations!</a><a href='#step10'>End your lab</a>
+</div>
+</div>
+
+</div>
+
+
+</div>
+</div>
+<div class='lab-introduction js-lab-introduction is-hidden'>
+<div class='lab-introduction__inner'>
+<h1 class='headline-1'>Welcome to Your First Lab!</h1>
+<ql-icon-button class='js-skip-button'>close</ql-icon-button>
+<div class='lab-introduction__video'>
+<iframe allow='autoplay; encrypted-media' allowfullscreen frameborder='0' id='lab-introduction' src='https://www.youtube.com/embed/yF7EDXKTmoQ?enablejsapi=1&amp;rel=0&amp;showinfo=0'></iframe>
+</div>
+<a class='js-skip-button button button--outline'>Skip this video</a>
+</div>
+</div>
+
+
+
+</div>
+</main>
+<div class='modal fade' id='lab-details-modal'>
+<div class='modal-container'>
+<div class='mdl-shadow--24dp modal-content'>
+<div class='modal-body'>
+<p class='l-mbm'>
+In this lab, you will experiment with pre-built models (no coding). First we’ll start with the pre-trained Vision API where we don’t need to bring our own data and then we’ll progress into AutoML for more sophisticated custom labelling that we need
+</p>
+<p class='small-label l-mbs'>
+<strong>
+Duration:
+</strong>
+0m setup
+&middot;
+150m access
+&middot;
+150m completion
+</p>
+<p class='small-label l-mbs'>
+<span><strong>Levels: </strong>introductory</span>
+</p>
+<p class='small-label'>
+<strong>
+Permalink:
+</strong>
+<a href="https://googlecoursera.qwiklabs.com/catalog_lab/1968">https://googlecoursera.qwiklabs.com/catalog_lab/1968</a>
+</p>
+</div>
+<div class='modal-actions'>
+<a class='mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect' data-dismiss='modal'>
+Got It
+</a>
+</div>
+
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+<div class='modal fade' id='lab-review-modal'>
+<div class='modal-container'>
+<div class='mdl-shadow--24dp modal-content'>
+<form class="simple_form js-lab-review-form" id="new_lab_review" action="/lab_reviews" accept-charset="UTF-8" data-remote="true" method="post"><input name="utf8" type="hidden" value="&#x2713;" /><div class='modal-body'>
+<p class='label'>
+How satisfied are you with this lab?*
+</p>
+<div class='rateit js-rateit' data-rateit-max='5' data-rateit-min='0' data-rateit-resetable='false' data-rateit-step='1' data-rateit-value='0'></div>
+<div class='l-mtm'>
+
+<div class="control-group hidden lab_review_user_id"><div class="controls"><input class="hidden" type="hidden" value="1018107" name="lab_review[user_id]" id="lab_review_user_id" /></div></div>
+<div class="control-group hidden lab_review_classroom_id"><div class="controls"><input class="hidden" type="hidden" name="lab_review[classroom_id]" id="lab_review_classroom_id" /></div></div>
+<div class="control-group hidden lab_review_lab_id"><div class="controls"><input class="hidden" type="hidden" value="1968" name="lab_review[lab_id]" id="lab_review_lab_id" /></div></div>
+<div class="control-group hidden lab_review_focus_id"><div class="controls"><input class="hidden" type="hidden" name="lab_review[focus_id]" id="lab_review_focus_id" /></div></div>
+<div class="control-group hidden lab_review_rating"><div class="controls"><input class="hidden js-rating-input" type="hidden" name="lab_review[rating]" id="lab_review_rating" /></div></div>
+<div class="control-group text optional lab_review_comment"><label class="text optional control-label" for="lab_review_comment">Comment</label><div class="controls"><textarea class="text optional" name="lab_review[comment]" id="lab_review_comment">
+</textarea></div></div>
+</div>
+</div>
+<div class='modal-actions'>
+<a class='mdl-button mdl-button--primary mdl-js-button mdl-js-ripple-effect' data-dismiss='modal'>
+Cancel
+</a>
+<input type="submit" name="commit" value="Submit" disabled="disabled" class="btn mdl-button mdl-js-button mdl-js-ripple-effect mdl-button--primary" id="submit" data-disabled="false" data-disable-with="Submit" />
+</div>
+</form>
+
+</div>
+</div>
+<iframe class='l-ie-iframe-fix'></iframe>
+</div>
+
+<script>
+  $( function() {
+    ql.initMaterialInputs();
+    initChosen();
+    initSearch();
+    initTabs();
+    ql.list.init();
+    ql.favoriting.init();
+    ql.header.myAccount.init();
+    initTooltips();
+    ql.autocomplete.init();
+    ql.modals.init();
+    ql.toggleButtons.init();
+    ql.analytics.init();
+    initLabContent( );
+  ql.labOutline.links.init();
+  ql.labOutline.layout.init();
+  initLabReviewModal();
+  ql.labAssessment.init();
+  ql.labIntroduction.init( true );
+  ql.labData.init();
+  initLabTranslations( {"are_you_sure":"All done? If you end this lab, you will lose all your work. You may not be able to restart the lab if there is a quota limit. Are you sure you want to end this lab?\n","in_progress":"*In Progress*","ending":"*Ending*","starting":"*Starting, please wait*","end_concurrent_labs":"Sorry, you can only run one lab at a time. To start this lab, please confirm that you want all of your existing labs to end.\n","copied":"Copied","no_resource":"Error retrieving resource.","no_support":"No Support","mac_press":"Press ⌘-C to copy","thanks_review":"Thanks for reviewing this lab.","windows_press":"Press Ctrl-C to copy","days":"days"} );
+  ql.labRun.init();
+  ql.initHeader();
+  ql.navigation.init();
+  ql.navPanel.init();
+  ql.navigation.init();
+  
+  });
+</script>
+<style>
+  .mdl-layout__container {
+    position: static
+  }
+</style>
+</body>
+</html>
