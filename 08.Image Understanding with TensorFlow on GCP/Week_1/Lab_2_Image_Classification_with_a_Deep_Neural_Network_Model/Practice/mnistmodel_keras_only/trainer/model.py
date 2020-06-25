@@ -1,0 +1,82 @@
+import os
+import shutil
+
+import matplotlib.pyplot as plt
+import numpy as np
+import tensorflow as tf
+from tensorflow.keras import Sequential
+from tensorflow.keras.callbacks import TensorBoard
+from tensorflow.keras.layers import (Conv2D, Dense, Dropout, Flatten,
+                                     MaxPooling2D, Softmax)
+
+from . import util
+
+# Image Variables
+WIDTH = 28
+HEIGHT = 28
+
+def get_layers(model_type, nclasses = 10, hidden_layer_1_neurons=400,
+              hidden_layer_2_neurons=100):
+    """
+    Construct layers for keras model based on a dict of model types.
+    """
+    model_layers = {
+        'linear':[
+            Flatten(),
+            Dense(nclasses),
+            Softmax()
+        ],
+        'dnn':[
+            Flatten(),
+            Dense(hidden_layer_1_neurons, activation='relu'),
+            Dense(hidden_layer_2_neurons, activation='relu'),
+            Dense(nclasses),
+            Softmax()
+        ]
+    }
+    
+    return model_layers[model_type]
+
+def build_model(layers, output_dir):
+    """
+    Compiles keras model for image classification.
+    """
+    model = Sequential(layers)
+    model.compile(optimizer='adam',
+                 loss='categorical_crossentropy',
+                 metrics=['accuracy'])
+    return model
+
+def train_and_evaluate(model, num_epochs, steps_per_epoch, output_dir):
+    """
+    Compiles keras model and loads data into it for training.
+    """
+    # Load MNIST dataset
+    mnist = tf.keras.datasets.mnist.load_data()
+    
+    # Spilt dataset into train and validation.
+    train_data = util.load_dataset(mnist)
+    validation_data = util.load_dataset(mnist, training=False)
+    
+    # Create TensorBoard callback
+    callbacks = []
+    if output_dir:
+        tensorboard_callback = TensorBoard(log_dir=output_dir)
+        callbacks = [tensorboard_callback]
+    
+    # Train the model
+    history = model.fit(
+        train_data,
+        validation_data=validation_data,
+        epochs=num_epochs,
+        steps_per_epoch=steps_per_epoch,
+        verbose=2,
+        callbacks=callbacks
+    )
+    
+    # Now save the trained model
+    if output_dir:
+        export_path = os.path.join(output_dir, 'keras_export')
+        model.save(export_path, save_format='tf')
+    
+    return history
