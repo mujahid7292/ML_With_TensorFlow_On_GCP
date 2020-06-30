@@ -190,7 +190,7 @@ node {
     key: "else_branch"
     value {
       func {
-        name: "global_step_cond_false_664"
+        name: "global_step_cond_false_207"
       }
     }
   }
@@ -207,7 +207,7 @@ node {
     key: "then_branch"
     value {
       func {
-        name: "global_step_cond_true_663"
+        name: "global_step_cond_true_206"
       }
     }
   }
@@ -13102,7 +13102,7 @@ node {
         dtype: DT_STRING
         tensor_shape {
         }
-        string_val: "_temp_c6599d04ccb14534a62e4e6e5f03798d/part"
+        string_val: "_temp_a06d524b9b6943dd817738bde42181d3/part"
       }
     }
   }
@@ -20170,7 +20170,7 @@ node {
 library {
   function {
     signature {
-      name: "global_step_cond_false_664"
+      name: "global_step_cond_false_207"
       input_arg {
         name: "placeholder"
         type: DT_RESOURCE
@@ -20203,7 +20203,7 @@ library {
   }
   function {
     signature {
-      name: "global_step_cond_true_663"
+      name: "global_step_cond_true_206"
       input_arg {
         name: "read_readvariableop_global_step"
         type: DT_RESOURCE
