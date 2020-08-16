@@ -260,7 +260,9 @@ def make_input_fn(csv_of_filenames, batch_size, training=True, augment=False):
             count=num_epochs
         ).batch(batch_size=batch_size)
         
-        return dataset.make_one_shot_iterator().get_next()
+        #return dataset.make_one_shot_iterator().get_next()
+        return tf.compat.v1.data.make_one_shot_iterator(dataset) \
+                .get_next()
     return _input_fn
 
 # Wrapper function to build selected Keras model type.
@@ -330,7 +332,7 @@ def train_and_evaluate(output_dir, hparams):
         input_fn=make_input_fn(
             csv_of_filenames=hparams['eval_data_path'],
             batch_size=hparams['batch_size'],
-            training=False,
+            training=False
         ),
         steps=None,
         exporters=exporter,
