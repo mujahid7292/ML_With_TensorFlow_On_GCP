@@ -281,4 +281,65 @@ def image_classifier(hparams):
     return model
 
 # Create train_and_evaluate function.
-def 
+def train_and_evaluate(output_dir, hparams):
+    # Ensure filewriter cache is clear for TensorBoard event file.
+    tf.compat.v1.summary.FileWriterCache.clear()
+    
+    EVAL_INTERVAL = 60
+    
+    # Build Keras model.
+    model = image_classifier(hparams)
+    
+    # Compile Keras model with Optimizer, Loss Function
+    # and eval metric.
+    model.compile(
+        optimizer="adam",
+        loss="categorical_crossentropy",
+        metrics=["accuracy"]
+    )
+    
+    # Convert keras model to estimator.
+    estimator = tf.keras.estimator.model_to_estimator(
+        keras_model=model,
+        model_dir=output_dir,
+        config=tf.estimator.RunConfig(
+            save_checkpoints_secs=EVAL_INTERVAL
+        )
+    )
+    
+    # Set estimator train_spec
+    train_spec = tf.estimator.TrainSpec(
+        input_fn=make_input_fn(
+            csv_of_filenames=hparams['train_data_path'],
+            batch_size=hparams['batch_size'],
+            training=True,
+            augment=hparams['augment']
+        ),
+        max_steps=hparams['train_steps']
+    )
+    
+    # Create exporter that use serving_input_fn() to
+    # create saved_model for serving.
+    exporter = tf.estimator.LatestExporter(
+        name="exporter",
+        serving_input_receiver_fn=serving_input_fn,
+    )
+    
+    # Set estimators eval_spec.
+    eval_spec = tf.estimator.EvalSpec(
+        input_fn=make_input_fn(
+            csv_of_filenames=hparams['eval_data_path'],
+            batch_size=hparams['batch_size'],
+            training=False,
+        ),
+        steps=None,
+        exporters=exporter,
+        throttle_secs=EVAL_INTERVAL
+    )
+    
+    # Run train_and_evaluate
+    tf.estimator.train_and_evaluate(
+        estimator=estimator, 
+        train_spec=train_spec, 
+        eval_spec=eval_spec
+    )
